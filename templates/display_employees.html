@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Display Employees</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <h1>Registered Employees</h1>
+    
+
+    <table  border="1" class="employees-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Age</th>
+                <th>Phone number</th>
+                <th>Designation</th>
+                <th>Departement</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in page_obj %}
+            <tr>
+                <td>{{ employee.id }}</td>
+                <td>{{ employee.name }}</td>
+                <td>{{ employee.email}}</td>
+                <td>{{ employee.age}}</td>
+                <td>{{ employee.phone }}</td>
+                <td>{{ employee.designation }}</td>
+                <td>{{ employee.department }}</td>
+                
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a class="button-container" href="?page={{page_obj.previous_page_number}}">Previous</a>
+        {% endif %}
+        <span>Page {{ page_obj.number}} of {{page_obj.paginator.num_pages}}</span>
+        {% if page_obj.has_next %}
+            <a class="button-container" href="?page={{page_obj.next_page_number}}">Next</a>
+        {% endif %}
+    </div>
+    <div class="button-container">
+        <a href="{% url 'adminpage' %}">Back to Admin Page</a>
+    </div>
+</body>
+</html>

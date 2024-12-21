@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect,get_object_or_404
+from django.core.paginator import Paginator
 from .models import Employee,Project
 # Create your views here.
 
@@ -63,3 +64,23 @@ def add_project(request):
     }
 
     return render(request, 'add_project.html', context)
+
+def display_employees(request):
+    employee=Employee.objects.all()
+
+    paginator=Paginator(employee,6)
+
+    page_number= request.GET.get('page')
+    page_obj=paginator.get_page(page_number)
+
+    return render(request, 'display_employees.html', {'page_obj':page_obj})
+
+def display_projects(request):
+    project=Project.objects.all()
+
+    paginator=Paginator(project,6)
+
+    page_number= request.GET.get('page')
+    page_obj=paginator.get_page(page_number)
+
+    return render(request, 'display_projects.html', {'page_obj':page_obj})

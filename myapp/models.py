@@ -39,31 +39,31 @@ class Employee(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     age = models.PositiveIntegerField(null=True, blank=True)
-    phone = models.CharField(max_length=13, unique=True, null=True, blank=True)
+    phone = models.CharField(max_length=20, unique=True, null=True, blank=True)
     password = models.CharField(max_length=128, null=True, blank=True)
 
     designation_choices=(
-        ('DIRECTOR','Director'),
-        ('MANAGING DIRECTOR','Managing Director'),
-        ('SENIOR MANAGER','Senior Manager'),
-        ('SENIOR ACCOUNTANT','Senior Accountant'),
-        ('PROJECT MANAGER','Project Manager'),
-        ('HEAD DEVELOPER','Head Developer'),
-        ('TESING ','Testing Lead'),
-        ('DEVELOPER','Developer'),
-        ('TESTER','Tester'),
+        ('Director','Director'),
+        ('Managing Director','Managing Director'),
+        ('Senior Manager','Senior Manager'),
+        ('Senior Accountant','Senior Accountant'),
+        ('Project Manager','Project Manager'),
+        ('Head Developer','Head Developer'),
+        ('Testing Lead ','Testing Lead'),
+        ('Developer','Developer'),
+        ('Tester','Tester'),
         ('HR','HR'),
     )
 
     department_choices=(
-        ('ACCOUNTS','Accounts'),
-        ('TESTING','Testing'),
-        ('DEVELOPMENT','Development'),
-        ('SALES','Sales'),
-        ('SUPPORT','Support'),
+        ('Accounts','Accounts'),
+        ('Testing','Testing'),
+        ('Development','Development'),
+        ('Sales','Sales'),
+        ('Support','Support'),
     )
-    designation=models.CharField(max_length=100,choices=designation_choices,default='DEVELOPER')
-    department=models.CharField(max_length=100,choices=department_choices,default='DEVELOPMENT')
+    designation=models.CharField(max_length=100,choices=designation_choices,default='Developer')
+    department=models.CharField(max_length=100,choices=department_choices,default='Development')
 
     # Permissions fields
     is_staff = models.BooleanField(default=False)  
@@ -97,12 +97,13 @@ class Project(models.Model):
     duration=models.IntegerField(null=True, blank=True)
 
     department_choices=(
-        ('ACCOUNTS','Accounts'),
-        ('TESTING','Testing'),
-        ('DEVELOPMENT','Development'),
-        ('SALES','Sales'),
-        ('SUPPORT','Support'),
+        ('Accounts','Accounts'),
+        ('Testing','Testing'),
+        ('Development','Development'),
+        ('Sales','Sales'),
+        ('Support','Support'),
     )
+
     department=models.CharField(max_length=100,choices=department_choices)
     hours=models.IntegerField(null=True, blank=True)
 

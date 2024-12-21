@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Display Projects</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <h1>Registered Projects</h1>
+    
+
+    <table  border="1" class="projects-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Date of Project Receival</th>
+                <th>Duration</th>
+                <th>Departement</th>
+                <th>Hours</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for project in page_obj %}
+            <tr>
+                <td>{{ project.id }}</td>
+                <td>{{ project.name }}</td>
+                <td>{{ project.date_of_receive}}</td>
+                <td>{{ project.duration}}</td>
+                <td>{{ project.department }}</td>
+                <td>{{ project.hours }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a class="button-container" href="?page={{page_obj.previous_page_number}}">Previous</a>
+        {% endif %}
+        <span>Page {{ page_obj.number}} of {{page_obj.paginator.num_pages}}</span>
+        {% if page_obj.has_next %}
+            <a class="button-container" href="?page={{page_obj.next_page_number}}">Next</a>
+        {% endif %}
+    </div>
+    <div class="button-container">
+        <a href="{% url 'adminpage' %}">Back to Admin Page</a>
+    </div>
+</body>
+</html>
