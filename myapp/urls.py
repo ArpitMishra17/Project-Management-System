@@ -6,4 +6,5 @@ from django.conf import settings
 urlpatterns=[
     path('adminpage/',views.adminpage,name='adminpage'),
     path('add_employee/',views.add_employee,name="add_employee"),
+    path('add_project',views.add_project,name="add_project")
 ]

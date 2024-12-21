@@ -93,7 +93,22 @@ class Project(models.Model):
 
     id=models.AutoField(primary_key=True)
     name=models.CharField(max_length=100)
-    date_of_recieve=models.DateField()
-    duration=models.IntegerField()
-    department=models.CharField(max_length=100)
-    hours=models.IntegerField()
+    date_of_receive=models.DateField(null=True, blank=True)
+    duration=models.IntegerField(null=True, blank=True)
+
+    department_choices=(
+        ('ACCOUNTS','Accounts'),
+        ('TESTING','Testing'),
+        ('DEVELOPMENT','Development'),
+        ('SALES','Sales'),
+        ('SUPPORT','Support'),
+    )
+    department=models.CharField(max_length=100,choices=department_choices)
+    hours=models.IntegerField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+       
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return str(self.name)

@@ -6,15 +6,16 @@
     <link rel="stylesheet" href="{% static 'styles.css' %}">
 </head>
 <body>
-    
-        <div class="button-container">
-            <a href="{% url 'add_employee' %}">Add Employee</a> 
-            <a href="">View Employees</a>
+    <nav class="navbar">
+        <div class="user-info">
+            <span>Admin</span> <!-- Displays the username -->
         </div>
-        <div class="button-container">
-            <a href="">Add Project</a> 
-            <a href="">View Projects</a>
-        </div>
-       
+        <ul class="nav-links">
+            <li><a href="{% url 'add_employee' %}">Add Employee</a></li>
+            <li><a href="#">View Employees</a></li>
+            <li><a href="{% url 'add_project' %}">Add Project</a></li>
+            <li><a href="#">View Projects</a></li>
+        </ul>
+    </nav>
 </body>
 </html>

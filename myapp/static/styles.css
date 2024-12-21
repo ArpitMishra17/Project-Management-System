@@ -117,3 +117,52 @@ select {
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
     outline: none;
   }
+
+/* Navbar styles */
+.navbar {
+    background-color: #000000; /* Dark background color */
+    padding: 20px;
+    display: flex;
+    justify-content: space-between; /* Center the navbar items */
+    align-items: center;
+    border-radius: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for better look */
+}
+
+.nav-links {
+    list-style: none; /* Remove default list styling */
+    display: flex;
+    gap: 20px; /* Space between the links */
+    margin: 0;
+    padding: 0;
+    
+}
+
+.nav-links li {
+    display: inline;
+     /* Ensure list items are inline */
+}
+
+.nav-links a {
+    color: white; /* Text color */
+    text-decoration: none; /* Remove underline */
+    padding: 10px 15px; /* Padding for clickable area */
+    border-radius: 16px; /* Rounded edges for links */
+    transition: background-color 0.3s ease;
+    
+    
+     /* Smooth hover transition */
+}
+
+.nav-links a:hover {
+    color: #000;
+    background-color: #03efb8;
+     /* Slightly lighter color on hover */
+}
+  
+/* User info on the left */
+.user-info {
+    font-size: 16px; /* Adjust font size */
+    font-weight: bold;
+    color:white /* Make text slightly bolder */
+}
