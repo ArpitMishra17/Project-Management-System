@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Add Employee</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <h1>Add Employee</h1>
+    <form method="POST">
+        {% csrf_token %} 
+        <label>Name</label>
+        <input type="text" id="employee_name" placeholder="Enter Name " name="employee_name">
+        <label>Email</label>
+        <input type="text" id="employee_email" placeholder="Enter email address " name="employee_email" >
+        <label>Age</label>
+        <input type="text" id="employee_age" placeholder="Enter Age " name="employee_age">
+        <label>Phone Number</label>
+        <input type="text" id="employee_phone" placeholder="Enter Phone Number " name="employee_phone" >
+        <label>Designation</label>
+        <select name="employee_designation">
+            <option value="" disabled selected>Select Designation</option>
+            {% for value,label in designation_choices %}
+            <option value="{{value}}">{{label}}</option>
+            {% endfor %}
+        </select><br><br>
+        <label>Departement</label>
+        <select name="employee_department">
+            <option value="" disabled selected>Select Departement</option>
+            {% for value,label in department_choices %}
+            <option value="{{value}}">{{label}}</option>
+            {% endfor %}
+        </select><br>
+
+        <button type="submit">Add</button>
+
+    </form>
+    <div class="button-container">
+        
+        <a href="{% url 'adminpage' %}">Back to Admin Page</a>
+       
+        
+    </div>
+</body>
+</html>
