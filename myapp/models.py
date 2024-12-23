@@ -40,7 +40,7 @@ class Employee(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     age = models.PositiveIntegerField(null=True, blank=True)
     phone = models.CharField(max_length=20, unique=True, null=True, blank=True)
-    password = models.CharField(max_length=128, null=True, blank=True)
+    password = models.CharField(max_length=128, default="password", blank=True)
 
     projects=models.ManyToManyField("Project",related_name="employees")
 

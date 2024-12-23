@@ -1,7 +1,48 @@
 from django.shortcuts import render, redirect,get_object_or_404
 from django.core.paginator import Paginator
+from django.contrib.auth import login, authenticate
 from .models import Employee,Project,Department,Designation,projectDepartment
 # Create your views here.
+
+def test_manager(request):
+
+    return render(request,'test_manager.html')
+
+def test_employee(request):
+
+    return render(request,'test_employee.html')
+
+
+
+def employee_login(request):
+    if request.method == 'POST':
+
+        
+        employee_email=request.POST.get('employee_email',None)
+        employee_password=request.POST.get('employee_password',None)
+
+        print("employee_email" , employee_email)
+        print("employee_password" , employee_password)
+
+        employee=authenticate(request,email=employee_email, password=employee_password)
+
+
+        #print(employee.is_staff )
+
+        if employee:
+
+            if employee.designation and employee.designation.name in ["Project Manager","Senior Manager"]:
+                login(request,employee)
+                return redirect("test_manager")
+            else:
+                login(request,employee)
+                return redirect("test_employee")
+        else:
+            
+            return render(request, 'login.html', {'error': 'Invalid credentials'})
+    
+
+    return render(request, 'login.html')
 
 def adminpage(request):
     
