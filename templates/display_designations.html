@@ -2,33 +2,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Display Projects</title>
+    <title>Display Designations</title>
     <link rel="stylesheet" href="{% static 'styles.css' %}">
 </head>
 <body>
-    <h1>Registered Projects</h1>
+    <h1>Registered Designations</h1>
     
 
-    <table  border="1" class="projects-table">
+    <table  border="1" class="designation-table">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Name</th>
-                <th>Date of Project Receival</th>
-                <th>Duration</th>
-                <th>Departement</th>
-                <th>Hours</th>
+                
             </tr>
         </thead>
         <tbody>
-            {% for project in page_obj %}
+            {% for designation in page_obj %}
             <tr>
-                <td>{{ project.id }}</td>
-                <td>{{ project.name }}</td>
-                <td>{{ project.date_of_receive}}</td>
-                <td>{{ project.duration}}</td>
-                <td>{{ project.project_department }}</td>
-                <td>{{ project.hours }}</td>
+                <td>{{ designation.id }}</td>
+                <td>{{ designation.name }}</td>
+                
             </tr>
             {% endfor %}
         </tbody>

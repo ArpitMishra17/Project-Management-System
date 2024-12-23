@@ -42,28 +42,9 @@ class Employee(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(max_length=20, unique=True, null=True, blank=True)
     password = models.CharField(max_length=128, null=True, blank=True)
 
-    designation_choices=(
-        ('Director','Director'),
-        ('Managing Director','Managing Director'),
-        ('Senior Manager','Senior Manager'),
-        ('Senior Accountant','Senior Accountant'),
-        ('Project Manager','Project Manager'),
-        ('Head Developer','Head Developer'),
-        ('Testing Lead ','Testing Lead'),
-        ('Developer','Developer'),
-        ('Tester','Tester'),
-        ('HR','HR'),
-    )
 
-    department_choices=(
-        ('Accounts','Accounts'),
-        ('Testing','Testing'),
-        ('Development','Development'),
-        ('Sales','Sales'),
-        ('Support','Support'),
-    )
-    designation=models.CharField(max_length=100,choices=designation_choices,default='Developer')
-    department=models.CharField(max_length=100,choices=department_choices,default='Development')
+    designation=models.ForeignKey("Designation",on_delete=models.SET_NULL,null=True)
+    department=models.ForeignKey("Department",on_delete=models.SET_NULL,null=True)
 
     # Permissions fields
     is_staff = models.BooleanField(default=False)  
@@ -96,15 +77,9 @@ class Project(models.Model):
     date_of_receive=models.DateField(null=True, blank=True)
     duration=models.IntegerField(null=True, blank=True)
 
-    department_choices=(
-        ('Accounts','Accounts'),
-        ('Testing','Testing'),
-        ('Development','Development'),
-        ('Sales','Sales'),
-        ('Support','Support'),
-    )
 
-    department=models.CharField(max_length=100,choices=department_choices)
+
+    project_department=models.ForeignKey("projectDepartment",on_delete=models.SET_NULL,null=True)
     hours=models.IntegerField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
@@ -113,3 +88,28 @@ class Project(models.Model):
 
     def __str__(self):
         return str(self.name)
+    
+
+class Department(models.Model):
+
+    id=models.AutoField(primary_key=True)
+    name=models.CharField(max_length=100)
+    
+    def __str__(self):
+        return f"{self.name}" 
+    
+class Designation(models.Model):
+
+    id=models.AutoField(primary_key=True)
+    name=models.CharField(max_length=100)
+    
+    def __str__(self):
+        return f"{self.name}" 
+    
+class projectDepartment(models.Model):
+
+    id=models.AutoField(primary_key=True)
+    name=models.CharField(max_length=100)
+    
+    def __str__(self):
+        return f"{self.name}" 

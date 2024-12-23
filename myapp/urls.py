@@ -8,5 +8,11 @@ urlpatterns=[
     path('add_employee/',views.add_employee,name="add_employee"),
     path('add_project',views.add_project,name="add_project"),
     path('display_employees',views.display_employees,name="display_employees"),
-    path('display_projects',views.display_projects,name='display_projects')
+    path('display_projects',views.display_projects,name='display_projects'),
+    path('add_department',views.add_department,name="add_department"),
+    path('add_designation',views.add_designation,name="add_designation"),
+    path('display_departments',views.display_departments,name='display_departments'),
+    path('display_designations',views.display_designations,name='display_designations'),
+    path('add_project_department',views.add_project_department,name="add_project_department"),
+    path('display_project_departments',views.display_project_departments,name='display_project_departments'),
 ]

@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Add Project Department</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <h1>Add Project Department</h1>
+    <form method="POST">
+        {% csrf_token %} 
+        <label>Name</label>
+        <input type="text" id="project_department_name" placeholder="Enter Name " name="project_department_name">
+        
+
+        <button type="submit">Add</button>
+
+    </form>
+    <div class="button-container">
+        
+        <a href="{% url 'adminpage' %}">Back to Admin Page</a>
+       
+        
+    </div>
+</body>
+</html>

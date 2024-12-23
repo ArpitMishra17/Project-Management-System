@@ -20,15 +20,15 @@
         <label>Designation</label>
         <select name="employee_designation">
             <option value="" disabled selected>Select Designation</option>
-            {% for value,label in designation_choices %}
-            <option value="{{value}}">{{label}}</option>
+            {% for designation in designation_choices %}
+            <option value="{{designation.id}}">{{designation.name}}</option>
             {% endfor %}
         </select><br><br>
         <label>Departement</label>
         <select name="employee_department">
             <option value="" disabled selected>Select Departement</option>
-            {% for value,label in department_choices %}
-            <option value="{{value}}">{{label}}</option>
+            {% for department in department_choices %}
+            <option value="{{department.id}}">{{department.name}}</option>
             {% endfor %}
         </select><br>
 

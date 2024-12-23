@@ -22,8 +22,8 @@
         <label>Departement</label>
         <select name="project_department">
             <option value="" disabled selected>Select Departement</option>
-            {% for value,label in department_choices %}
-            <option value="{{value}}">{{label}}</option>
+            {% for department in department_choices %}
+            <option value="{{department.id}}">{{department}}</option>
             {% endfor %}
         </select><br>
 

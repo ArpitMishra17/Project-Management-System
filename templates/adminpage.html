@@ -17,8 +17,9 @@
                 <ul class="dropdown-content">
                     <li><a href="{% url 'add_employee' %}">Add Employee</a></li>
                     <li><a href="{% url 'add_project' %}">Add Project</a></li>
-                    <li><a href="#">Add Department</a></li>
-                    <li><a href="#">Add Designation</a></li>
+                    <li><a href="{% url 'add_department' %}">Add Department</a></li>
+                    <li><a href="{% url 'add_designation' %}">Add Designation</a></li>
+                    <li><a href="{% url 'add_project_department' %}">Add Project Department</a></li>
                 </ul>
             </li>
     
@@ -28,8 +29,9 @@
                 <ul class="dropdown-content">
                     <li><a href="{% url 'display_employees' %}">View Employees</a></li>
                     <li><a href="{% url 'display_projects' %}">View Projects</a></li>
-                    <li><a href="#">View Departments</a></li>
-                    <li><a href="#">View Designations</a></li>
+                    <li><a href="{% url 'display_departments' %}">View Departments</a></li>
+                    <li><a href="{% url 'display_designations' %}">View Designations</a></li>
+                    <li><a href="{% url 'display_project_departments' %}">View Project Departments</a></li>
                 </ul>
             </li>
         </ul>
