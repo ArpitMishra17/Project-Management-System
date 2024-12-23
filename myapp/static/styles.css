@@ -22,11 +22,11 @@ button {
     cursor: pointer;
     margin-top: 20px;
     transition: background 0.3s ease;
-    border-radius: 8px;
+    border-radius: 16px;
 }
 
 button:hover {
-    background: #bad7f5;
+    background: #03efb8;
     color: #121212;
 }
 
@@ -40,12 +40,12 @@ button:hover {
     cursor: pointer;
     margin-top: 20px;
     transition: background 0.3s ease;
-    border-radius: 8px;
+    border-radius: 16px;
     text-decoration: none;
 }
 
 .button-container a:hover {
-    background: #bad7f5;
+    background: #03efb8;
     color: #121212;
 }
 
@@ -154,12 +154,12 @@ th {
     color: white;
     background-color: black;
     padding: 8px 12px;
-    border-radius: 5px;
+    border-radius: 16px;
     transition: background 0.3s ease;
 }
 
 .pagination a:hover {
-    background-color: #bad7f5;
+    background-color: #03efb8;
     color: black;
 }
 
@@ -254,7 +254,7 @@ th {
     padding: 10px 15px;
     text-decoration: none;
     display: block; /* Makes the links fill the dropdown */
-    border-radius: 8px;
+    border-radius: 16px;
     transition: background-color 0.3s ease;
 }
 

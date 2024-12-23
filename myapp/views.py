@@ -167,3 +167,16 @@ def display_project_departments(request):
     page_obj=paginator.get_page(page_number)
 
     return render(request, 'display_project_departments.html', {'page_obj':page_obj})
+
+def project_home(request,project_id):
+
+    project=get_object_or_404(Project,id=project_id)
+
+    employees=Employee.objects.filter(designation__name__in=["Senior Manager","Project Manager"])
+
+    context={
+        'employees':employees,
+        'project':project
+    }
+
+    return render(request,'project_home.html',context)

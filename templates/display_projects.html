@@ -24,11 +24,11 @@
             {% for project in page_obj %}
             <tr>
                 <td>{{ project.id }}</td>
-                <td>{{ project.name }}</td>
+                <td><a href="{% url 'project_home' project.id %}">{{ project.name }}</a></td>
                 <td>{{ project.date_of_receive}}</td>
-                <td>{{ project.duration}}</td>
+                <td>{{ project.duration}} days</td>
                 <td>{{ project.project_department }}</td>
-                <td>{{ project.hours }}</td>
+                <td>{{ project.hours }} hrs</td>
             </tr>
             {% endfor %}
         </tbody>

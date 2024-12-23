@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns=[
+    path('',views.adminpage,name='adminpage'),
     path('adminpage/',views.adminpage,name='adminpage'),
     path('add_employee/',views.add_employee,name="add_employee"),
     path('add_project',views.add_project,name="add_project"),
@@ -15,4 +16,5 @@ urlpatterns=[
     path('display_designations',views.display_designations,name='display_designations'),
     path('add_project_department',views.add_project_department,name="add_project_department"),
     path('display_project_departments',views.display_project_departments,name='display_project_departments'),
+    path('project_home/<int:project_id>',views.project_home,name="project_home")
 ]
