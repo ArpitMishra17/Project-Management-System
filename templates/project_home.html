@@ -14,14 +14,14 @@
         <p>Duration: {{ project.duration }} days</p>
         <p>Hours: {{ project.hours }}</p>
         <label>Project Manager</label>
-        <select name="employee_designation">
+        <select name="manager_id" id="manager">
             <option value="" disabled selected>Select Project Manager</option>
             {% for employee in employees %}
             <option value="{{ employee.id }}">{{ employee.name }}</option>
             {% endfor %}
         </select><br><br>
 
-        <button type="submit">Add</button>
+        <button type="submit">Assign Manager</button>
 
     </form>
     <div class="button-container">

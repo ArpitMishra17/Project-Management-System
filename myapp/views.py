@@ -174,6 +174,17 @@ def project_home(request,project_id):
 
     employees=Employee.objects.filter(designation__name__in=["Senior Manager","Project Manager"])
 
+    if request.method =="POST":
+        manager_id=request.POST.get('manager_id')
+
+        if manager_id:
+            manager = get_object_or_404(Employee, id=manager_id)
+            manager.projects.add(project)
+            manager.save()
+            return redirect('project_home', project_id=project.id)
+        
+        
+
     context={
         'employees':employees,
         'project':project

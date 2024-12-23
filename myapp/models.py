@@ -42,6 +42,8 @@ class Employee(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(max_length=20, unique=True, null=True, blank=True)
     password = models.CharField(max_length=128, null=True, blank=True)
 
+    projects=models.ManyToManyField("Project",related_name="employees")
+
 
     designation=models.ForeignKey("Designation",on_delete=models.SET_NULL,null=True)
     department=models.ForeignKey("Department",on_delete=models.SET_NULL,null=True)
