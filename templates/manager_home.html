@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Manager Homepage</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <h1>{{employee.name}}</h1>
+    
+    <form method="POST">
+        {% csrf_token %} 
+        <ul>
+            <li>Projects:
+                <ul>
+                    {% for project in employee.projects.all %}
+                    <li><a href="{% url 'manager_project_home' project.id %}">{{project.name}}</a></li>
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
+        <!-- <p>Date of Receive: {{ project.date_of_receive }}</p>
+        <p>Duration: {{ project.duration }} days</p>
+        <p>Hours: {{ project.hours }}</p>
+        <label>Project Manager</label>
+        <select name="manager_id" id="manager">
+            <option value="" disabled selected>Select Project Manager</option>
+            {% for employee in employees %}
+            <option value="{{ employee.id }}">{{ employee.name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <button type="submit">Assign Manager</button> -->
+
+    </form>
+    <div class="button-container">
+        
+        <a href="{% url 'employee_login' %}">Logout</a>
+       
+        
+    </div>
+</body>
+</html>

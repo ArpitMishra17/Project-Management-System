@@ -2,17 +2,8 @@ from django.shortcuts import render, redirect,get_object_or_404
 from django.core.paginator import Paginator
 from django.contrib.auth import login, authenticate
 from .models import Employee,Project,Department,Designation,projectDepartment
+from django.http import JsonResponse
 # Create your views here.
-
-def test_manager(request):
-
-    return render(request,'test_manager.html')
-
-def test_employee(request):
-
-    return render(request,'test_employee.html')
-
-
 
 def employee_login(request):
     if request.method == 'POST':
@@ -33,7 +24,7 @@ def employee_login(request):
 
             if employee.designation and employee.designation.name in ["Project Manager","Senior Manager"]:
                 login(request,employee)
-                return redirect("test_manager")
+                return redirect("manager_home")
             else:
                 login(request,employee)
                 return redirect("test_employee")
@@ -222,7 +213,7 @@ def project_home(request,project_id):
             manager = get_object_or_404(Employee, id=manager_id)
             manager.projects.add(project)
             manager.save()
-            return redirect('project_home', project_id=project.id)
+            return redirect('display_projects', project_id=project.id)
         
         
 
@@ -232,3 +223,45 @@ def project_home(request,project_id):
     }
 
     return render(request,'project_home.html',context)
+
+def test_employee(request):
+
+    return render(request,'test_employee.html')
+
+def manager_home(request):
+
+    employee=Employee.objects.get(email=request.user.email)
+
+    return render(request,'manager_home.html',{'employee':employee})
+
+
+
+
+def manager_project_home(request,project_id):
+    
+    project=get_object_or_404(Project,id=project_id)
+    designations = Designation.objects.all()
+
+    if request.method == "POST":
+        designation= request.POST.get('designation')
+        employee_id= request.POST.get('employee') 
+
+        if employee_id:
+            employee=get_object_or_404(Employee,id=employee_id)
+            project.employees.add(employee)
+            return redirect('manager_project_home',project_id=project.id)
+           
+    
+
+    context={
+        'project':project,
+        'designations':designations,
+        'employees':Employee.objects.all(),
+    }
+
+    return render(request,'manager_project_home.html',context)
+
+def get_employees_by_designation(request):
+    designation=request.GET.get('designation')
+    employees= Employee.objects.filter(designation=designation).values('id','name')
+    return JsonResponse(list(employees),safe=False)

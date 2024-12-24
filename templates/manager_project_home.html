@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Project: {{ project.name }}</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <h1>Project: {{ project.name }}</h1>
+
+    <!-- Project Details -->
+    <h2>Assigned Employees:</h2>
+    <ul>
+        {% for employee in project.employees.all %}
+        <li>{{ employee.name }} ({{ employee.designation }})</li>
+        {% empty %}
+        <li>No employees assigned to this project yet.</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Form to Assign Employee -->
+    <h2>Assign Employee to Project</h2>
+    <form method="POST" id="assign-form">
+        {% csrf_token %}
+
+        <!-- Select Designation -->
+        <label for="designation">Select Designation:</label>
+        <select id="designation" name="designation" required>
+            <option value="">-- Select Designation --</option>
+            {% for designation in designations %}
+            <option value="{{ designation.id }}">{{ designation.name }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- Select Employee -->
+        <label for="employee">Select Employee:</label>
+        <select id="employee" name="employee" required>
+            <option value="">-- Select Employee --</option>
+        </select>
+
+        <button type="submit">Assign to Project</button>
+    </form>
+
+    <!-- Back to Manager Home -->
+    <div class="button-container">
+        <a href="{% url 'manager_home' %}">Back to Manager Homepage</a>
+    </div>
+
+    <script>
+        // Reference to designation and employee select elements
+        const designationSelect = document.getElementById('designation');
+        const employeeSelect = document.getElementById('employee');
+
+        // Event listener for when the designation changes
+        designationSelect.addEventListener('change', function () {
+            const designation = designationSelect.value;
+
+            // Clear the employee dropdown
+            employeeSelect.innerHTML = '<option value="">-- Loading... --</option>';
+
+            if (designation) {
+                // Make a request to fetch employees based on the selected designation
+                fetch(`/get_employees_by_designation?designation=${designation}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Populate the employee dropdown
+                        employeeSelect.innerHTML = '<option value="">-- Select Employee --</option>';
+                        data.forEach(employee => {
+                            const option = document.createElement('option');
+                            option.value = employee.id;
+                            option.textContent = employee.name;
+                            employeeSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching employees:', error);
+                        employeeSelect.innerHTML = '<option value="">-- Error Loading Employees --</option>';
+                    });
+            } else {
+                // Reset the employee dropdown if no designation is selected
+                employeeSelect.innerHTML = '<option value="">-- Select Employee --</option>';
+            }
+        });
+    </script>
+</body>
+</html>
