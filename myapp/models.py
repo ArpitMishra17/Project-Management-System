@@ -44,6 +44,9 @@ class Employee(AbstractBaseUser, PermissionsMixin):
 
     projects=models.ManyToManyField("Project",related_name="employees")
 
+    tasks=models.ManyToManyField("Task",related_name="employees")
+
+
 
     designation=models.ForeignKey("Designation",on_delete=models.SET_NULL,null=True)
     department=models.ForeignKey("Department",on_delete=models.SET_NULL,null=True)
@@ -79,7 +82,7 @@ class Project(models.Model):
     date_of_receive=models.DateField(null=True, blank=True)
     duration=models.IntegerField(null=True, blank=True)
 
-
+    tasks=models.ManyToManyField("Task",related_name="projects")
 
     project_department=models.ForeignKey("projectDepartment",on_delete=models.SET_NULL,null=True)
     hours=models.IntegerField(null=True, blank=True)
@@ -109,6 +112,14 @@ class Designation(models.Model):
         return f"{self.name}" 
     
 class projectDepartment(models.Model):
+
+    id=models.AutoField(primary_key=True)
+    name=models.CharField(max_length=100)
+    
+    def __str__(self):
+        return f"{self.name}" 
+    
+class Task(models.Model):
 
     id=models.AutoField(primary_key=True)
     name=models.CharField(max_length=100)

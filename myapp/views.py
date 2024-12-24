@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect,get_object_or_404
 from django.core.paginator import Paginator
 from django.contrib.auth import login, authenticate
-from .models import Employee,Project,Department,Designation,projectDepartment
+from .models import Employee,Project,Department,Designation,projectDepartment,Task
 from django.http import JsonResponse
 # Create your views here.
 
@@ -27,7 +27,7 @@ def employee_login(request):
                 return redirect("manager_home")
             else:
                 login(request,employee)
-                return redirect("test_employee")
+                return redirect("employee_home")
         else:
             
             return render(request, 'login.html', {'error': 'Invalid credentials'})
@@ -224,9 +224,11 @@ def project_home(request,project_id):
 
     return render(request,'project_home.html',context)
 
-def test_employee(request):
+def employee_home(request):
 
-    return render(request,'test_employee.html')
+    employee=Employee.objects.get(email=request.user.email)
+
+    return render(request,'employee_home.html',{'employee':employee})
 
 def manager_home(request):
 
@@ -265,3 +267,18 @@ def get_employees_by_designation(request):
     designation=request.GET.get('designation')
     employees= Employee.objects.filter(designation=designation).values('id','name')
     return JsonResponse(list(employees),safe=False)
+
+def add_task(request, project_id):
+    if request.method == 'POST':
+        project = get_object_or_404(Project, id=project_id)
+        task_name = request.POST.get('task_name')
+        employee_id = request.POST.get('task_employee')
+
+        employee = get_object_or_404(Employee, id=employee_id)
+
+        # Create the task
+        task = Task.objects.create(name=task_name)
+        task.employees.add(employee)  # Add employee to task
+        employee.tasks.add(task)  # Add task to employee
+        project.tasks.add(task)  # linking task and project
+        return redirect('manager_project_home', project_id=project_id)

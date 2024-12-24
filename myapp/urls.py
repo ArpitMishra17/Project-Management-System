@@ -18,7 +18,8 @@ urlpatterns=[
     path('display_project_departments',views.display_project_departments,name='display_project_departments'),
     path('project_home/<int:project_id>',views.project_home,name="project_home"),
     path('manager_home/',views.manager_home,name="manager_home"),
-    path('test_employee/',views.test_employee,name="test_employee"),
+    path('employee_home/',views.employee_home,name="employee_home"),
     path("manager_project_home<int:project_id>/",views.manager_project_home,name="manager_project_home"),
     path('get_employees_by_designation', views.get_employees_by_designation, name='get_employees_by_designation'),
+     path('add_task/<int:project_id>/', views.add_task, name='add_task'),
 ]

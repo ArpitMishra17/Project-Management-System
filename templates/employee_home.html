@@ -2,20 +2,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Manager Homepage</title>
+    <title>Employee Homepage</title>
     <link rel="stylesheet" href="{% static 'styles.css' %}">
 </head>
 <body>
     <h1>{{employee.name}}</h1>
     
-    
-        <div class="project-grid">
-            {% for project in employee.projects.all %}
-            <a href="{% url 'manager_project_home' project.id %}"><div class="project-card">
-                <h3>{{project.name}}</h3>
-            </div></a>
-            {% endfor %}
-        </div>
+    <form method="POST">
+        {% csrf_token %} 
+        <ul>
+            <li>Projects:
+                <ul>
+                    {% for project in employee.projects.all %}
+                    <li><a href="#">{{project.name}}</a></li>
+                    {% endfor %}
+                </ul>
+            </li>
+            <li>Tasks:
+                <ul>
+                    {% for task in employee.tasks.all %}
+                    <li><a href="#">{{task.name}}</a></li>
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
         <!-- <p>Date of Receive: {{ project.date_of_receive }}</p>
         <p>Duration: {{ project.duration }} days</p>
         <p>Hours: {{ project.hours }}</p>
@@ -29,7 +39,7 @@
 
         <button type="submit">Assign Manager</button> -->
 
-
+    </form>
     <div class="button-container">
         
         <a href="{% url 'employee_login' %}">Logout</a>

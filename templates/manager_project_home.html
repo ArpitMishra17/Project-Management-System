@@ -6,64 +6,132 @@
     <link rel="stylesheet" href="{% static 'styles.css' %}">
 </head>
 <body>
-    <h1>Project: {{ project.name }}</h1>
+    <h1>Project: {{ project.name }}</h1><br><br>
+    <div class="project-details">
+        <!-- Project Details -->
+            <h2>Name: {{project.name}}</h2>
+            <h2>Date of Receival: {{project.date_of_receive}}</h2>
+            <h2>Duration: {{project.duration}}</h2>
+            <h2>Department: {{project.project_department}}</h2>
+            <h2>Hours: {{project.hours}}</h2>
+            <h2>Assigned Employees:</h2>
+            <ul>
+                {% for employee in project.employees.all %}
+                <li>{{ employee.name }} ({{ employee.designation }})</li>
+                {% empty %}
+                <li>No employees assigned to this project yet.</li>
+                {% endfor %}
+            </ul>
+        </div><br><br>
 
-    <!-- Project Details -->
-    <h2>Assigned Employees:</h2>
-    <ul>
-        {% for employee in project.employees.all %}
-        <li>{{ employee.name }} ({{ employee.designation }})</li>
-        {% empty %}
-        <li>No employees assigned to this project yet.</li>
-        {% endfor %}
-    </ul>
+   
 
-    <!-- Form to Assign Employee -->
-    <h2>Assign Employee to Project</h2>
-    <form method="POST" id="assign-form">
-        {% csrf_token %}
+    <!-- Trigger Buttons for Modals -->
+    <div class="modal_button">
+        <button id="assign-employee-btn">Assign Employee to Project</button>
+        <button id="add-task-btn">Add Task and Assign to Employee</button>
+    </div>
 
-        <!-- Select Designation -->
-        <label for="designation">Select Designation:</label>
-        <select id="designation" name="designation" required>
-            <option value="">-- Select Designation --</option>
-            {% for designation in designations %}
-            <option value="{{ designation.id }}">{{ designation.name }}</option>
-            {% endfor %}
-        </select>
+    <!-- Assign Employee Modal -->
+    <dialog id="assign-employee-modal">
+        <span class="close-btn" id="close-assign-employee">&times;</span>
+        <h2>Assign Employee to Project</h2>
+        <form method="POST" id="assign-form">
+            {% csrf_token %}
+            <label for="designation">Select Designation:</label>
+            <select id="designation" name="designation" required>
+                <option value="">-- Select Designation --</option>
+                {% for designation in designations %}
+                <option value="{{ designation.id }}">{{ designation.name }}</option>
+                {% endfor %}
+            </select>
 
-        <!-- Select Employee -->
-        <label for="employee">Select Employee:</label>
-        <select id="employee" name="employee" required>
-            <option value="">-- Select Employee --</option>
-        </select>
+            <label for="employee">Select Employee:</label>
+            <select id="employee" name="employee" required>
+                <option value="">-- Select Employee --</option>
+            </select>
 
-        <button type="submit">Assign to Project</button>
-    </form>
+            <button type="submit">Assign to Project</button>
+        </form>
+        
+    </dialog>
+
+    <!-- Add Task Modal -->
+    <dialog id="add-task-modal">
+        <span class="close-btn" id="close-add-task">&times;</span>
+        <h2>Add Task and Assign to Employee</h2>
+        <form method="POST" action="{% url 'add_task' project.id %}">
+            {% csrf_token %}
+            <label for="task_name">Task Name:</label>
+            <input type="text" id="task_name" name="task_name" placeholder="Enter Task Name" required>
+
+            <label for="task_employee">Assign to Employee:</label>
+            <select id="task_employee" name="task_employee" required>
+                <option value="">-- Select Employee --</option>
+                {% for employee in project.employees.all %}
+                <option value="{{ employee.id }}">{{ employee.name }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Add Task</button>
+        </form>
+       
+    </dialog>
 
     <!-- Back to Manager Home -->
     <div class="button-container">
         <a href="{% url 'manager_home' %}">Back to Manager Homepage</a>
     </div>
 
+    <!-- JavaScript for Modal Functionality -->
     <script>
-        // Reference to designation and employee select elements
+        // Get modal and button elements
+        const assignEmployeeModal = document.getElementById('assign-employee-modal');
+        const addTaskModal = document.getElementById('add-task-modal');
+        const assignEmployeeBtn = document.getElementById('assign-employee-btn');
+        const addTaskBtn = document.getElementById('add-task-btn');
+        const closeAssignEmployee = document.getElementById('close-assign-employee');
+        const closeAddTask = document.getElementById('close-add-task');
+
+        // Open modals
+        assignEmployeeBtn.addEventListener('click', () => {
+            assignEmployeeModal.showModal();
+        });
+        addTaskBtn.addEventListener('click', () => {
+            addTaskModal.showModal();
+        });
+
+        // Close modals
+        closeAssignEmployee.addEventListener('click', () => {
+            assignEmployeeModal.close();
+        });
+        closeAddTask.addEventListener('click', () => {
+            addTaskModal.close();
+        });
+
+        window.addEventListener("click", function(event) {
+            if (event.target === assignEmployeeModal) {
+                assignEmployeeModal.close();
+            }
+            if (event.target === addTaskModal) {
+                addTaskModal.close();
+            }
+        });
+
+
+        // Fetch employees dynamically when designation changes
         const designationSelect = document.getElementById('designation');
         const employeeSelect = document.getElementById('employee');
 
-        // Event listener for when the designation changes
         designationSelect.addEventListener('change', function () {
             const designation = designationSelect.value;
 
-            // Clear the employee dropdown
             employeeSelect.innerHTML = '<option value="">-- Loading... --</option>';
 
             if (designation) {
-                // Make a request to fetch employees based on the selected designation
                 fetch(`/get_employees_by_designation?designation=${designation}`)
                     .then(response => response.json())
                     .then(data => {
-                        // Populate the employee dropdown
                         employeeSelect.innerHTML = '<option value="">-- Select Employee --</option>';
                         data.forEach(employee => {
                             const option = document.createElement('option');
@@ -77,7 +145,6 @@
                         employeeSelect.innerHTML = '<option value="">-- Error Loading Employees --</option>';
                     });
             } else {
-                // Reset the employee dropdown if no designation is selected
                 employeeSelect.innerHTML = '<option value="">-- Select Employee --</option>';
             }
         });
