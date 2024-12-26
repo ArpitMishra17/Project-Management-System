@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="{% static 'styles.css' %}">
 </head>
 <body>
+    <a href="{% url 'update_password' %}?referer=manager_home" class="update-password">Update Password</a>
     <h1>{{employee.name}}</h1>
     
     

@@ -21,5 +21,9 @@ urlpatterns=[
     path('employee_home/',views.employee_home,name="employee_home"),
     path("manager_project_home<int:project_id>/",views.manager_project_home,name="manager_project_home"),
     path('get_employees_by_designation', views.get_employees_by_designation, name='get_employees_by_designation'),
-     path('add_task/<int:project_id>/', views.add_task, name='add_task'),
+    path('add_task/<int:project_id>/', views.add_task, name='add_task'),
+    path('add_module/<int:project_id>/',views.add_module,name='add_module'),
+    path('start_task/<int:task_id>', views.start_task, name='start_task'),
+    path('stop_task/<int:task_id>', views.stop_task, name='stop_task'),
+    path('update-password/', views.update_password, name='update_password'),
 ]

@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect,get_object_or_404
 from django.core.paginator import Paginator
 from django.contrib.auth import login, authenticate
-from .models import Employee,Project,Department,Designation,projectDepartment,Task
+from .models import Employee,Project,Department,Designation,projectDepartment,Task,Module
+from django.contrib import messages
 from django.http import JsonResponse
+from django.utils import timezone
+from django.contrib.auth.hashers import check_password, make_password
 # Create your views here.
 
 def employee_login(request):
@@ -34,6 +37,33 @@ def employee_login(request):
     
 
     return render(request, 'login.html')
+
+def update_password(request):
+    employee=request.user
+    referer = request.GET.get('referer', 'employee_home') 
+
+    if request.method=='POST':
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if not check_password(current_password, employee.password):
+            messages.error(request, "Current password is incorrect.")
+            return redirect('update_password')
+        
+        if new_password != confirm_password:
+            messages.error(request, "New password and confirmation do not match.")
+            return redirect('update_password')
+        
+        employee.password = make_password(new_password)
+        employee.save()
+
+        login(request, employee)
+        messages.success(request, "Password updated successfully!")
+        return redirect(referer)
+        
+    return render(request, 'update_password.html', {'referer': referer})
+
 
 def adminpage(request):
     
@@ -213,7 +243,7 @@ def project_home(request,project_id):
             manager = get_object_or_404(Employee, id=manager_id)
             manager.projects.add(project)
             manager.save()
-            return redirect('display_projects', project_id=project.id)
+            return redirect('display_projects')
         
         
 
@@ -253,32 +283,114 @@ def manager_project_home(request,project_id):
             project.employees.add(employee)
             return redirect('manager_project_home',project_id=project.id)
            
-    
+    unassigned_employees = Employee.objects.exclude(
+        id__in=project.employees.values_list('id', flat=True)
+    )
 
     context={
         'project':project,
         'designations':designations,
-        'employees':Employee.objects.all(),
+        'employees':unassigned_employees,
     }
 
     return render(request,'manager_project_home.html',context)
 
 def get_employees_by_designation(request):
     designation=request.GET.get('designation')
-    employees= Employee.objects.filter(designation=designation).values('id','name')
+    project_id = request.GET.get('project_id')
+
+    project = get_object_or_404(Project, id=project_id)
+    employees = Employee.objects.filter(designation=designation).exclude(
+        id__in=project.employees.values_list('id', flat=True)
+    ).values('id', 'name')
     return JsonResponse(list(employees),safe=False)
+
+def add_module(request,project_id):
+    if request.method == 'POST':
+        project = get_object_or_404(Project, id=project_id)
+
+        
+        module_name = request.POST.get('module_name')
+        estimated_duration = request.POST.get('estimated_duration')
+        description = request.POST.get('description')
+       
+
+       
+        if not module_name:
+            messages.error(request, "Please provide the module name.")
+            return redirect('manager_project_home', project_id=project_id)
+
+   
+        Module.objects.create(
+            name=module_name,
+            project_id=project,
+            estimated_duration=estimated_duration,
+            description=description
+        )
+
+        messages.success(request, "Module added successfully!")
+        return redirect('manager_project_home', project_id=project_id)
+
+    return redirect('manager_project_home', project_id=project_id)
 
 def add_task(request, project_id):
     if request.method == 'POST':
+       
         project = get_object_or_404(Project, id=project_id)
+
         task_name = request.POST.get('task_name')
         employee_id = request.POST.get('task_employee')
+        module_id = request.POST.get('task_module')
 
+      
         employee = get_object_or_404(Employee, id=employee_id)
+        module = get_object_or_404(Module, id=module_id, project_id=project)
+        
+        estimated_duration = request.POST.get('estimated_duration')
+        priority = request.POST.get('priority')
 
-        # Create the task
-        task = Task.objects.create(name=task_name)
-        task.employees.add(employee)  # Add employee to task
-        employee.tasks.add(task)  # Add task to employee
-        project.tasks.add(task)  # linking task and project
+    
+        task = Task.objects.create(
+            name=task_name,
+            module_id=module,
+            description=request.POST.get('description'),
+            estimated_duration=estimated_duration,
+            priority=priority,
+        )
+
+        task.employees.add(employee)
+        module.task_set.add(task)
+
+        messages.success(request, "Task added successfully!")
         return redirect('manager_project_home', project_id=project_id)
+
+    return redirect('manager_project_home', project_id=project_id)
+
+
+
+# View to start a task (change status to Ongoing and set start time)
+def start_task(request,task_id):
+    task = get_object_or_404(Task, id=task_id)
+
+    if task.status == "Not started":
+        task.start_time = timezone.now().time()
+        task.status = "Ongoing"
+        task.save()
+        messages.success(request, "Task started successfully!")
+    else:
+        messages.error(request, "Task cannot be started.")
+
+    return redirect('employee_home')  # Redirect after starting the task
+# View to stop a task (set stop time and change status to 'Finished')
+def stop_task(request,task_id):
+    task = get_object_or_404(Task, id=task_id)
+
+    if task.status == "Ongoing":
+        task.end_time = timezone.now().time()
+        task.status = "Finished"
+        task.save()
+        messages.success(request, "Task ended successfully!")
+    else:
+        messages.error(request, "Task cannot be ended.")
+
+    return redirect('employee_home') 

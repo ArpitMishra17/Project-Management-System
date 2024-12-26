@@ -6,29 +6,137 @@
     <link rel="stylesheet" href="{% static 'styles.css' %}">
 </head>
 <body>
-    <h1>{{employee.name}}</h1>
+    <a href="{% url 'update_password' %}?referer=employee_home" class="update-password">Update Password</a>
+    <h1>{{ employee.name }}</h1>
+
+    <div class="project-grid">
+        {% for project in employee.projects.all %}
+        <a href="#"><div class="project-card">
+            <h3>{{project.name}}</h3>
+        </div></a>
+        {% endfor %}
+    </div><br><br>
     
-    <form method="POST">
-        {% csrf_token %} 
-        <ul>
-            <li>Projects:
-                <ul>
-                    {% for project in employee.projects.all %}
-                    <li><a href="#">{{project.name}}</a></li>
-                    {% endfor %}
-                </ul>
-            </li>
-            <li>Tasks:
-                <ul>
-                    {% for task in employee.tasks.all %}
-                    <li><a href="#">{{task.name}}</a></li>
-                    {% endfor %}
-                </ul>
-            </li>
-        </ul>
-        <!-- <p>Date of Receive: {{ project.date_of_receive }}</p>
-        <p>Duration: {{ project.duration }} days</p>
-        <p>Hours: {{ project.hours }}</p>
+    <form class="table-form" method="POST">
+        {% csrf_token %}
+        <h2>Pending Tasks</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Task Name</th>
+                    <th>Module</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Estimated Duration</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in employee.tasks.all %}
+                    {% if task.status == 'Not started' %}
+                        <tr>
+                            <td>{{ task.name }}</td>
+                            <td>{{ task.module_id.name }}</td>
+                            <td>{{ task.get_status_display }}</td>
+                            <td>{{ task.get_priority_display }}</td>
+                            <td>{{ task.estimated_duration }} hours</td>
+                            <td>{{ task.description }}</td>
+                            <td>
+                                <a href="{% url 'start_task' task.id %}">Start Task</a>
+
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% empty %}
+                <tr>
+                    <td colspan="7">No pending tasks.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    
+        <h2>Ongoing Tasks</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Task Name</th>
+                    <th>Module</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Estimated Duration</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in employee.tasks.all %}
+                    {% if task.status == 'Ongoing' %}
+                        <tr>
+                            <td>{{ task.name }}</td>
+                            <td>{{ task.module_id.name }}</td>
+                            <td>{{ task.get_status_display }}</td>
+                            <td>{{ task.get_priority_display }}</td>
+                            <td>{{ task.estimated_duration }} hours</td>
+                            <td>{{ task.description }}</td>
+                            <td>
+                                <a href="{% url 'stop_task' task.id %}">Stop Task</a>
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% empty %}
+                <tr>
+                    <td colspan="7">No ongoing tasks.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    
+        <h2>Completed Tasks</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Task Name</th>
+                    <th>Module</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Estimated Duration</th>
+                    <th>Description</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in employee.tasks.all %}
+                    {% if task.status == 'Finished' %}
+                        <tr>
+                            <td>{{ task.name }}</td>
+                            <td>{{ task.module_id.name }}</td>
+                            <td>{{ task.get_status_display }}</td>
+                            <td>{{ task.get_priority_display }}</td>
+                            <td>{{ task.estimated_duration }} hours</td>
+                            <td>{{ task.description }}</td>
+                            <td>{{ task.start_time }}</td>
+                            <td>{{ task.end_time }}</td>
+                        </tr>
+                    {% endif %}
+                {% empty %}
+                <tr>
+                    <td colspan="8">No completed tasks.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    
+    </form>
+    
+       
+    
+
+    
+
+        <!-- The manager assignment section can be included if necessary -->
+        <!-- 
         <label>Project Manager</label>
         <select name="manager_id" id="manager">
             <option value="" disabled selected>Select Project Manager</option>
@@ -37,14 +145,12 @@
             {% endfor %}
         </select><br><br>
 
-        <button type="submit">Assign Manager</button> -->
+        <button type="submit">Assign Manager</button>
+        -->
+    
 
-    </form>
     <div class="button-container">
-        
         <a href="{% url 'employee_login' %}">Logout</a>
-       
-        
     </div>
 </body>
 </html>

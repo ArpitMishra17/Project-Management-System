@@ -22,14 +22,31 @@
                 <li>No employees assigned to this project yet.</li>
                 {% endfor %}
             </ul>
-        </div><br><br>
+            <h2>Modules</h2>
+            <div class="modules">
+                {% for module in project.module_set.all %}
+                <div class="module">
+                    <h3>{{ module.name }}</h3>
+                    <p><strong>Estimated Duration:</strong> {{ module.estimated_duration }}</p>
+                    <p><strong>Description:</strong> {{ module.description }}</p>
+                    <!-- <p><strong>Start Time:</strong> {{ module.start_time }}</p>
+                    <p><strong>End Time:</strong> {{ module.end_time }}</p> -->
+                </div>
+                {% empty %}
+                <p>No modules added yet.</p>
+                {% endfor %}
+            </div>
+
+    </div><br><br>
+
 
    
 
     <!-- Trigger Buttons for Modals -->
     <div class="modal_button">
-        <button id="assign-employee-btn">Assign Employee to Project</button>
-        <button id="add-task-btn">Add Task and Assign to Employee</button>
+        <button id="assign-employee-btn">Assign Employee</button>
+        <button id="add-module-btn">Add Module</button>
+        <button id="add-task-btn">Add Task</button>
     </div>
 
     <!-- Assign Employee Modal -->
@@ -49,6 +66,9 @@
             <label for="employee">Select Employee:</label>
             <select id="employee" name="employee" required>
                 <option value="">-- Select Employee --</option>
+                {% for employee in employees %}
+                <option value="{{ employee.id }}">{{ employee.name }}</option>
+                {% endfor %}
             </select>
 
             <button type="submit">Assign to Project</button>
@@ -56,14 +76,48 @@
         
     </dialog>
 
-    <!-- Add Task Modal -->
+    <dialog id="add-module-modal">
+        <span class="close-btn" id="close-add-module">&times;</span>
+        <h2>Add Module</h2>
+        <form method="POST" action="{% url 'add_module' project.id %}">
+            {% csrf_token %}
+            
+            <label for="module_name">Module Name:</label>
+            <input type="text" id="module_name" name="module_name" placeholder="Enter Module Name" required>
+
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" placeholder="Enter Module Description"></textarea>
+
+            <label for="estimated_duration">Estimated Duration (hours):</label>
+            <input type="number" id="estimated_duration" name="estimated_duration" min="1">
+
+            <!-- <label for="start_time">Start Time:</label>
+            <input type="time" id="start_time" name="start_time">
+
+            <label for="end_time">End Time:</label>
+            <input type="time" id="end_time" name="end_time"> -->
+
+            <button type="submit">Add Module</button>
+        </form>
+    </dialog>
+
+        <!-- Add Task Modal -->
     <dialog id="add-task-modal">
         <span class="close-btn" id="close-add-task">&times;</span>
-        <h2>Add Task and Assign to Employee</h2>
+        <h2>Add Task</h2>
         <form method="POST" action="{% url 'add_task' project.id %}">
             {% csrf_token %}
+            
             <label for="task_name">Task Name:</label>
             <input type="text" id="task_name" name="task_name" placeholder="Enter Task Name" required>
+
+            <label for="task_module">Assign to Module:</label>
+            <select id="task_module" name="task_module" required>
+                <option value="">-- Select Module --</option>
+                {% for module in project.module_set.all %}
+                <option value="{{ module.id }}">{{ module.name }}</option>
+                {% endfor %}
+            </select>
 
             <label for="task_employee">Assign to Employee:</label>
             <select id="task_employee" name="task_employee" required>
@@ -73,10 +127,37 @@
                 {% endfor %}
             </select>
 
+            <label for="priority">Priority:</label>
+            <select id="priority" name="priority" required>
+                <option value="">-- Select Priority --</option>
+                <option value="High Priority">High Priority</option>
+                <option value="Medium Priority">Medium Priority</option>
+                <option value="Low Priority">Low Priority</option>
+            </select>
+<!-- 
+            <label for="status">Status:</label>
+            <select id="status" name="status" required>
+                <option value="Not started">Not started</option>
+                <option value="Ongoing">Ongoing</option>
+                <option value="Finished">Finished</option>
+            </select> -->
+
+            <label for="estimated_duration">Estimated Duration (hours):</label>
+            <input type="number" id="estimated_duration" name="estimated_duration" min="1">
+
+            <!-- <label for="start_time">Start Time:</label>
+            <input type="time" id="start_time" name="start_time">
+
+            <label for="end_time">End Time:</label>
+            <input type="time" id="end_time" name="end_time"> -->
+
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" placeholder="Enter Task Description"></textarea>
+
             <button type="submit">Add Task</button>
         </form>
-       
     </dialog>
+
 
     <!-- Back to Manager Home -->
     <div class="button-container">
@@ -92,6 +173,9 @@
         const addTaskBtn = document.getElementById('add-task-btn');
         const closeAssignEmployee = document.getElementById('close-assign-employee');
         const closeAddTask = document.getElementById('close-add-task');
+        const addModuleModal = document.getElementById('add-module-modal');
+        const addModuleBtn = document.getElementById('add-module-btn');
+        const closeAddModule = document.getElementById('close-add-module');
 
         // Open modals
         assignEmployeeBtn.addEventListener('click', () => {
@@ -118,10 +202,26 @@
             }
         });
 
+        addModuleBtn.addEventListener('click', () => {
+        addModuleModal.showModal();
+        });
+
+        closeAddModule.addEventListener('click', () => {
+            addModuleModal.close();
+        });
+
+        window.addEventListener("click", function(event) {
+            if (event.target === addModuleModal) {
+                addModuleModal.close();
+            }
+        });
+
 
         // Fetch employees dynamically when designation changes
         const designationSelect = document.getElementById('designation');
         const employeeSelect = document.getElementById('employee');
+        const projectId = "{{ project.id }}";
+
 
         designationSelect.addEventListener('change', function () {
             const designation = designationSelect.value;
@@ -129,7 +229,7 @@
             employeeSelect.innerHTML = '<option value="">-- Loading... --</option>';
 
             if (designation) {
-                fetch(`/get_employees_by_designation?designation=${designation}`)
+                fetch(`/get_employees_by_designation?designation=${designation}&project_id=${projectId}`)
                     .then(response => response.json())
                     .then(data => {
                         employeeSelect.innerHTML = '<option value="">-- Select Employee --</option>';

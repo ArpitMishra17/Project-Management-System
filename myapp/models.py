@@ -119,10 +119,55 @@ class projectDepartment(models.Model):
     def __str__(self):
         return f"{self.name}" 
     
+
+    
+
+class Module(models.Model):
+
+    id=models.AutoField(primary_key=True)
+    name=models.CharField(max_length=100)
+    project_id=models.ForeignKey(Project,on_delete=models.CASCADE,null=True,blank=True)
+    estimated_duration=models.IntegerField(null=True,blank=True)
+    start_time=models.TimeField(null=True,blank=True)
+    end_time=models.TimeField(null=True,blank=True)
+    actual_duration=models.IntegerField(null=True,blank=True)
+    description=models.CharField(max_length=200,null=True,blank=True)
+    status_choices=(
+        ("Not started","Not started"),
+        ("Ongoing","Ongoing"),
+        ("Finished","Finished")
+    )
+    status=models.CharField(max_length=100,choices=status_choices,default="Not started")
+
+    
+    def __str__(self):
+        return f"{self.name}" 
+    
+
 class Task(models.Model):
 
     id=models.AutoField(primary_key=True)
     name=models.CharField(max_length=100)
     
+    module_id=models.ForeignKey(Module,on_delete=models.CASCADE,null=True,blank=True)
+    estimated_duration=models.IntegerField(null=True,blank=True)
+    start_time=models.TimeField(null=True,blank=True)
+    end_time=models.TimeField(null=True,blank=True)
+    actual_duration=models.IntegerField(null=True,blank=True)
+    description=models.CharField(max_length=200,null=True,blank=True)
+    status_choices=(
+        ("Not started","Not started"),
+        ("Ongoing","Ongoing"),
+        ("Finished","Finished")
+    )
+    status=models.CharField(max_length=100,choices=status_choices,default="Not started")
+    priority_choices=(
+        ("High Priority","High Priority"),
+        ("Medium Priority","Medium Priority"),
+        ("Low Priority","Low Priority")
+    )
+    priority=models.CharField(max_length=100,choices=priority_choices,default="Low Priority")
+
+
     def __str__(self):
         return f"{self.name}" 
