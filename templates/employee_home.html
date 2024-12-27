@@ -4,6 +4,47 @@
 <head>
     <title>Employee Homepage</title>
     <link rel="stylesheet" href="{% static 'styles.css' %}">
+    
+    <!-- Include DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    
+    <!-- Include jQuery (required for DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Include DataTables JS -->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    
+    <script>
+        // Initialize DataTables for each table
+        $(document).ready(function() {
+            // Pending Tasks Table
+            $('#pending-tasks').DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "order": [[3, 'desc']] // Sort by Priority column (index 3) in descending order
+            });
+
+            // Ongoing Tasks Table
+            $('#ongoing-tasks').DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "order": [[3, 'desc']] // Sort by Priority column (index 3) in descending order
+            });
+
+            // Completed Tasks Table
+            $('#completed-tasks').DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "order": [[3, 'desc']] // Sort by Priority column (index 3) in descending order
+            });
+        });
+    </script>
 </head>
 <body>
     <a href="{% url 'update_password' %}?referer=employee_home" class="update-password">Update Password</a>
@@ -20,7 +61,7 @@
     <form class="table-form" method="POST">
         {% csrf_token %}
         <h2>Pending Tasks</h2>
-        <table border="1">
+        <table id="pending-tasks" class="display" border="1">
             <thead>
                 <tr>
                     <th>Task Name</th>
@@ -44,7 +85,6 @@
                             <td>{{ task.description }}</td>
                             <td>
                                 <a href="{% url 'start_task' task.id %}">Start Task</a>
-
                             </td>
                         </tr>
                     {% endif %}
@@ -57,7 +97,7 @@
         </table>
     
         <h2>Ongoing Tasks</h2>
-        <table border="1">
+        <table id="ongoing-tasks" class="display" border="1">
             <thead>
                 <tr>
                     <th>Task Name</th>
@@ -93,7 +133,7 @@
         </table>
     
         <h2>Completed Tasks</h2>
-        <table border="1">
+        <table id="completed-tasks" class="display" border="1">
             <thead>
                 <tr>
                     <th>Task Name</th>
@@ -127,28 +167,8 @@
                 {% endfor %}
             </tbody>
         </table>
-    
     </form>
     
-       
-    
-
-    
-
-        <!-- The manager assignment section can be included if necessary -->
-        <!-- 
-        <label>Project Manager</label>
-        <select name="manager_id" id="manager">
-            <option value="" disabled selected>Select Project Manager</option>
-            {% for employee in employees %}
-            <option value="{{ employee.id }}">{{ employee.name }}</option>
-            {% endfor %}
-        </select><br><br>
-
-        <button type="submit">Assign Manager</button>
-        -->
-    
-
     <div class="button-container">
         <a href="{% url 'employee_login' %}">Logout</a>
     </div>

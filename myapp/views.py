@@ -300,31 +300,35 @@ def manager_home(request):
 
 
 
-def manager_project_home(request,project_id):
-    
-    project=get_object_or_404(Project,id=project_id)
+def manager_project_home(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
     designations = Designation.objects.all()
 
     if request.method == "POST":
-        designation= request.POST.get('designation')
-        employee_id= request.POST.get('employee') 
+        designation = request.POST.get('designation')
+        employee_id = request.POST.get('employee')
 
         if employee_id:
-            employee=get_object_or_404(Employee,id=employee_id)
+            employee = get_object_or_404(Employee, id=employee_id)
             project.employees.add(employee)
-            return redirect('manager_project_home',project_id=project.id)
-           
+            return redirect('manager_project_home', project_id=project.id)
+
+    # Get all modules with their tasks
+    modules = project.module_set.all().prefetch_related('tasks')
+    
+    # Get unassigned employees
     unassigned_employees = Employee.objects.exclude(
         id__in=project.employees.values_list('id', flat=True)
     )
 
-    context={
-        'project':project,
-        'designations':designations,
-        'employees':unassigned_employees,
+    context = {
+        'project': project,
+        'designations': designations,
+        'employees': unassigned_employees,
+        'modules': modules,
     }
 
-    return render(request,'manager_project_home.html',context)
+    return render(request, 'manager_project_home.html', context)
 
 def get_employees_by_designation(request):
     designation=request.GET.get('designation')
@@ -434,3 +438,4 @@ def stop_task(request,task_id):
         messages.error(request, "Task cannot be ended.")
 
     return redirect('employee_home') 
+

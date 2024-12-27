@@ -22,20 +22,7 @@
                 <li>No employees assigned to this project yet.</li>
                 {% endfor %}
             </ul>
-            <h2>Modules</h2>
-            <div class="modules">
-                {% for module in project.module_set.all %}
-                <div class="module">
-                    <h3>{{ module.name }}</h3>
-                    <p><strong>Estimated Duration:</strong> {{ module.estimated_duration }}</p>
-                    <p><strong>Description:</strong> {{ module.description }}</p>
-                    <!-- <p><strong>Start Time:</strong> {{ module.start_time }}</p>
-                    <p><strong>End Time:</strong> {{ module.end_time }}</p> -->
-                </div>
-                {% empty %}
-                <p>No modules added yet.</p>
-                {% endfor %}
-            </div>
+            
 
     </div><br><br>
 
@@ -47,8 +34,9 @@
         <button id="assign-employee-btn">Assign Employee</button>
         <button id="add-module-btn">Add Module</button>
         <button id="add-task-btn">Add Task</button>
+        <button id="view-modules-btn">View Modules</button>
+        <button id="view-tasks-btn">View Tasks</button>
     </div>
-
     <!-- Assign Employee Modal -->
     <dialog id="assign-employee-modal">
         <span class="close-btn" id="close-assign-employee">&times;</span>
@@ -158,6 +146,97 @@
         </form>
     </dialog>
 
+     <!-- View Modules Modal -->
+     <dialog id="view-modules-modal">
+        <span class="close-btn" id="close-view-modules">&times;</span>
+        <h2>Project Modules</h2>
+        <div class="modules-list">
+            {% for module in project.module_set.all %}
+            <div class="module-item">
+                <h3>{{ module.name }}</h3>
+                <p><strong>Status:</strong> {{ module.status }}</p>
+                <p><strong>Estimated Duration:</strong> {{ module.estimated_duration }} hours</p>
+                <p><strong>Actual Duration:</strong> {{ module.actual_duration|default:"Not completed" }}</p>
+                <p><strong>Description:</strong> {{ module.description }}</p>
+                {% if module.start_time %}
+                    <p><strong>Start Time:</strong> {{ module.start_time }}</p>
+                {% endif %}
+                {% if module.end_time %}
+                    <p><strong>End Time:</strong> {{ module.end_time }}</p>
+                {% endif %}
+                <div class="task-count">
+                    <p><strong>Tasks:</strong> {{ module.tasks.count }}</p>
+                </div>
+            </div><br>
+            {% empty %}
+            <p>No modules found for this project.</p>
+            {% endfor %}
+        </div>
+    </dialog>
+
+    <!-- View Tasks Modal -->
+    <dialog id="view-tasks-modal">
+        <span class="close-btn" id="close-view-tasks">&times;</span>
+        <h2>Project Tasks</h2>
+        <div class="tasks-filter">
+            <label for="module-filter">Filter by Module:</label>
+            <select id="module-filter">
+                <option value="">All Modules</option>
+                {% for module in project.module_set.all %}
+                <option value="{{ module.id }}">{{ module.name }}</option>
+                {% endfor %}
+            </select>
+            
+            <label for="status-filter">Filter by Status:</label>
+            <select id="status-filter">
+                <option value="">All Statuses</option>
+                <option value="Not started">Not Started</option>
+                <option value="Ongoing">Ongoing</option>
+                <option value="Finished">Finished</option>
+            </select>
+
+            <label for="priority-filter">Filter by Priority:</label>
+            <select id="priority-filter">
+                <option value="">All Priorities</option>
+                <option value="High Priority">High Priority</option>
+                <option value="Medium Priority">Medium Priority</option>
+                <option value="Low Priority">Low Priority</option>
+            </select>
+        </div>
+        <div class="tasks-list">
+            {% for module in project.module_set.all %}
+            <div class="module-tasks" data-module-id="{{ module.id }}">
+                <h2>{{ module.name }}</h2>
+                {% for task in module.tasks.all %}
+                <div class="task-item" data-status="{{ task.status }}" data-priority="{{ task.priority }}">
+                    <p><strong>Name: </strong>{{ task.name }}</p>
+                    <p><strong>Status:</strong> {{ task.status }}</p>
+                    <p><strong>Priority:</strong> {{ task.priority }}</p>
+                    <p><strong>Assigned to:</strong> 
+                        {% for employee in task.employees.all %}
+                            {{ employee.name }}{% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            Not assigned
+                        {% endfor %}
+                    </p>
+                    <p><strong>Estimated Duration:</strong> {{ task.estimated_duration }} hours</p>
+                    <p><strong>Actual Duration:</strong> {{ task.actual_duration|default:"Not completed" }}</p>
+                    <p><strong>Description:</strong> {{ task.description }}</p>
+                    {% if task.start_time %}
+                        <p><strong>Start Time:</strong> {{ task.start_time }}</p>
+                    {% endif %}
+                    {% if task.end_time %}
+                        <p><strong>End Time:</strong> {{ task.end_time }}</p>
+                    {% endif %}
+                </div><br><br>
+                {% empty %}
+                <p>No tasks found for this module.</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </dialog>
+
 
     <!-- Back to Manager Home -->
     <div class="button-container">
@@ -248,6 +327,73 @@
                 employeeSelect.innerHTML = '<option value="">-- Select Employee --</option>';
             }
         });
+           // Add new modal functionality
+           const viewModulesModal = document.getElementById('view-modules-modal');
+        const viewTasksModal = document.getElementById('view-tasks-modal');
+        const viewModulesBtn = document.getElementById('view-modules-btn');
+        const viewTasksBtn = document.getElementById('view-tasks-btn');
+        const closeViewModules = document.getElementById('close-view-modules');
+        const closeViewTasks = document.getElementById('close-view-tasks');
+
+        // Open view modals
+        viewModulesBtn.addEventListener('click', () => {
+            viewModulesModal.showModal();
+        });
+        
+        viewTasksBtn.addEventListener('click', () => {
+            viewTasksModal.showModal();
+        });
+
+        // Close view modals
+        closeViewModules.addEventListener('click', () => {
+            viewModulesModal.close();
+        });
+        
+        closeViewTasks.addEventListener('click', () => {
+            viewTasksModal.close();
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener("click", function(event) {
+            if (event.target === viewModulesModal) {
+                viewModulesModal.close();
+            }
+            if (event.target === viewTasksModal) {
+                viewTasksModal.close();
+            }
+        });
+
+        // Task filtering functionality
+        const moduleFilter = document.getElementById('module-filter');
+        const statusFilter = document.getElementById('status-filter');
+        const priorityFilter = document.getElementById('priority-filter');
+        const moduleTasks = document.querySelectorAll('.module-tasks');
+        const taskItems = document.querySelectorAll('.task-item');
+
+        function filterTasks() {
+            const selectedModule = moduleFilter.value;
+            const selectedStatus = statusFilter.value;
+            const selectedPriority = priorityFilter.value;
+
+            moduleTasks.forEach(moduleSection => {
+                const moduleId = moduleSection.dataset.moduleId;
+                const shouldShowModule = !selectedModule || moduleId === selectedModule;
+                moduleSection.style.display = shouldShowModule ? 'block' : 'none';
+
+                if (shouldShowModule) {
+                    const tasks = moduleSection.querySelectorAll('.task-item');
+                    tasks.forEach(task => {
+                        const matchesStatus = !selectedStatus || task.dataset.status === selectedStatus;
+                        const matchesPriority = !selectedPriority || task.dataset.priority === selectedPriority;
+                        task.style.display = (matchesStatus && matchesPriority) ? 'block' : 'none';
+                    });
+                }
+            });
+        }
+
+        moduleFilter.addEventListener('change', filterTasks);
+        statusFilter.addEventListener('change', filterTasks);
+        priorityFilter.addEventListener('change', filterTasks);
     </script>
 </body>
 </html>

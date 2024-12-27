@@ -10,20 +10,22 @@
 </head>
 <body>
     <a href="{% url 'update_password' %}?referer=manager_home" class="update-password">Update Password</a>
-    <h1>{{employee.name}}</h1>
+    <h1>{{ employee.name }}</h1>
     
     <!-- Projects Section -->
     <div class="project-grid">
         {% for project in employee.projects.all %}
-        <a href="{% url 'manager_project_home' project.id %}"><div class="project-card">
-            <h3>{{project.name}}</h3>
-        </div></a>
+        <a href="{% url 'manager_project_home' project.id %}">
+            <div class="project-card">
+                <h3>{{ project.name }}</h3>
+            </div>
+        </a>
         {% endfor %}
     </div>
 
-    <!-- Tasks Section -->
-    <h2>Tasks Under Your Projects</h2>
-    <table id="tasks-table" class="display">
+    <!-- Ongoing Tasks Section -->
+    <h2>Ongoing Tasks</h2>
+    <table id="ongoing-tasks-table" class="display">
         <thead>
             <tr>
                 <th>Task Name</th>
@@ -32,24 +34,90 @@
                 <th>Assigned Employees</th>
                 <th>Status</th>
                 <th>Priority</th>
-                
             </tr>
         </thead>
         <tbody>
             {% for task in project_tasks_list %}
-                <tr>
-                    <td>{{ task.task_name }}</td>
-                    <td>{{ task.project_name }}</td>
-                    <td>{{ task.module_name }}</td>
-                    <td>
-                        {% for emp in task.employee_names %}
-                            {{ emp }}{% if not forloop.last %}, {% endif %}
-                        {% endfor %}
-                    </td>
-                    <td>{{ task.task_status }}</td>
-                    <td>{{ task.task_priority }}</td>
-                    
-                </tr>
+                {% if task.task_status == 'Ongoing' %}
+                    <tr>
+                        <td>{{ task.task_name }}</td>
+                        <td>{{ task.project_name }}</td>
+                        <td>{{ task.module_name }}</td>
+                        <td>
+                            {% for emp in task.employee_names %}
+                                {{ emp }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>{{ task.task_status }}</td>
+                        <td>{{ task.task_priority }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Not Started Tasks Section -->
+    <h2>Not Started Tasks</h2>
+    <table id="not-started-tasks-table" class="display">
+        <thead>
+            <tr>
+                <th>Task Name</th>
+                <th>Project Name</th>
+                <th>Module Name</th>
+                <th>Assigned Employees</th>
+                <th>Status</th>
+                <th>Priority</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in project_tasks_list %}
+                {% if task.task_status == 'Not started' %}
+                    <tr>
+                        <td>{{ task.task_name }}</td>
+                        <td>{{ task.project_name }}</td>
+                        <td>{{ task.module_name }}</td>
+                        <td>
+                            {% for emp in task.employee_names %}
+                                {{ emp }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>{{ task.task_status }}</td>
+                        <td>{{ task.task_priority }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Finished Tasks Section -->
+    <h2>Finished Tasks</h2>
+    <table id="finished-tasks-table" class="display">
+        <thead>
+            <tr>
+                <th>Task Name</th>
+                <th>Project Name</th>
+                <th>Module Name</th>
+                <th>Assigned Employees</th>
+                <th>Status</th>
+                <th>Priority</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in project_tasks_list %}
+                {% if task.task_status == 'Finished' %}
+                    <tr>
+                        <td>{{ task.task_name }}</td>
+                        <td>{{ task.project_name }}</td>
+                        <td>{{ task.module_name }}</td>
+                        <td>
+                            {% for emp in task.employee_names %}
+                                {{ emp }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>{{ task.task_status }}</td>
+                        <td>{{ task.task_priority }}</td>
+                    </tr>
+                {% endif %}
             {% endfor %}
         </tbody>
     </table>
@@ -61,7 +129,10 @@
     <!-- DataTables Initialization -->
     <script>
         $(document).ready(function() {
-            $('#tasks-table').DataTable();
+            // Initialize DataTables for each table
+            $('#ongoing-tasks-table').DataTable();
+            $('#not-started-tasks-table').DataTable();
+            $('#finished-tasks-table').DataTable();
         });
     </script>
 </body>
