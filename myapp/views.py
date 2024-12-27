@@ -263,8 +263,39 @@ def employee_home(request):
 def manager_home(request):
 
     employee=Employee.objects.get(email=request.user.email)
+    projects = employee.projects.all()
 
-    return render(request,'manager_home.html',{'employee':employee})
+    
+    # Gather all tasks related to the manager's projects
+    tasks = Task.objects.filter(module_id__project_id__in=projects).select_related('module_id', 'module_id__project_id').prefetch_related('employees')
+
+    project_tasks_list = []
+
+    for project in projects:
+        project_tasks = tasks.filter(module_id__project_id=project)
+        
+        for task in project_tasks:
+            project_tasks_list.append(
+            {
+                "task_name" : task.name,
+                "project_name" : project.name,
+                "module_name" : task.module_id.name,
+                "employee_names": [employee.name for employee in task.employees.all()],
+                "task_status" : task.status,
+                "task_priority" : task.priority,
+                "task_endTime" : task.end_time,
+                
+            }
+            )
+
+    context={
+        'project_tasks_list': project_tasks_list,
+        'employee':employee,
+        
+    }
+
+
+    return render(request,'manager_home.html',context)
 
 
 
@@ -337,14 +368,19 @@ def add_task(request, project_id):
     if request.method == 'POST':
        
         project = get_object_or_404(Project, id=project_id)
+        print("project id" , project_id)
+        print("project id ---" , project.id)
+        print("project name ---" , project.name)
 
         task_name = request.POST.get('task_name')
         employee_id = request.POST.get('task_employee')
         module_id = request.POST.get('task_module')
+        print("module_id" , module_id)
 
       
         employee = get_object_or_404(Employee, id=employee_id)
         module = get_object_or_404(Module, id=module_id, project_id=project)
+        print("module_id from db" , module.id)
         
         estimated_duration = request.POST.get('estimated_duration')
         priority = request.POST.get('priority')
@@ -359,7 +395,11 @@ def add_task(request, project_id):
         )
 
         task.employees.add(employee)
-        module.task_set.add(task)
+        task.module_id = module  
+        
+        task.save() 
+        print("task id" , task.id)          
+
 
         messages.success(request, "Task added successfully!")
         return redirect('manager_project_home', project_id=project_id)

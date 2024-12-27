@@ -4,38 +4,65 @@
 <head>
     <title>Manager Homepage</title>
     <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 </head>
 <body>
     <a href="{% url 'update_password' %}?referer=manager_home" class="update-password">Update Password</a>
     <h1>{{employee.name}}</h1>
     
-    
-        <div class="project-grid">
-            {% for project in employee.projects.all %}
-            <a href="{% url 'manager_project_home' project.id %}"><div class="project-card">
-                <h3>{{project.name}}</h3>
-            </div></a>
-            {% endfor %}
-        </div>
-        <!-- <p>Date of Receive: {{ project.date_of_receive }}</p>
-        <p>Duration: {{ project.duration }} days</p>
-        <p>Hours: {{ project.hours }}</p>
-        <label>Project Manager</label>
-        <select name="manager_id" id="manager">
-            <option value="" disabled selected>Select Project Manager</option>
-            {% for employee in employees %}
-            <option value="{{ employee.id }}">{{ employee.name }}</option>
-            {% endfor %}
-        </select><br><br>
+    <!-- Projects Section -->
+    <div class="project-grid">
+        {% for project in employee.projects.all %}
+        <a href="{% url 'manager_project_home' project.id %}"><div class="project-card">
+            <h3>{{project.name}}</h3>
+        </div></a>
+        {% endfor %}
+    </div>
 
-        <button type="submit">Assign Manager</button> -->
-
+    <!-- Tasks Section -->
+    <h2>Tasks Under Your Projects</h2>
+    <table id="tasks-table" class="display">
+        <thead>
+            <tr>
+                <th>Task Name</th>
+                <th>Project Name</th>
+                <th>Module Name</th>
+                <th>Assigned Employees</th>
+                <th>Status</th>
+                <th>Priority</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in project_tasks_list %}
+                <tr>
+                    <td>{{ task.task_name }}</td>
+                    <td>{{ task.project_name }}</td>
+                    <td>{{ task.module_name }}</td>
+                    <td>
+                        {% for emp in task.employee_names %}
+                            {{ emp }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>{{ task.task_status }}</td>
+                    <td>{{ task.task_priority }}</td>
+                    
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
     <div class="button-container">
-        
         <a href="{% url 'employee_login' %}">Logout</a>
-       
-        
     </div>
+
+    <!-- DataTables Initialization -->
+    <script>
+        $(document).ready(function() {
+            $('#tasks-table').DataTable();
+        });
+    </script>
 </body>
 </html>

@@ -82,7 +82,7 @@ class Project(models.Model):
     date_of_receive=models.DateField(null=True, blank=True)
     duration=models.IntegerField(null=True, blank=True)
 
-    tasks=models.ManyToManyField("Task",related_name="projects")
+   
 
     project_department=models.ForeignKey("projectDepartment",on_delete=models.SET_NULL,null=True)
     hours=models.IntegerField(null=True, blank=True)
@@ -149,7 +149,7 @@ class Task(models.Model):
     id=models.AutoField(primary_key=True)
     name=models.CharField(max_length=100)
     
-    module_id=models.ForeignKey(Module,on_delete=models.CASCADE,null=True,blank=True)
+    module_id=models.ForeignKey(Module,on_delete=models.CASCADE,null=True,blank=True, related_name="tasks")
     estimated_duration=models.IntegerField(null=True,blank=True)
     start_time=models.TimeField(null=True,blank=True)
     end_time=models.TimeField(null=True,blank=True)
