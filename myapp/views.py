@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.utils import timezone
 from django.contrib.auth.hashers import check_password, make_password
+from datetime import datetime
 # Create your views here.
 
 def employee_login(request):
@@ -104,33 +105,39 @@ def add_employee(request):
 
 
 def add_project(request):
-    if request.method=='POST':
-        name=request.POST.get('project_name', None)
-        date_of_receive=request.POST.get('project_date_of_receive',None)
-        duration=request.POST.get('project_duration',None)
-        project_department_id=request.POST.get('project_department',None)
-        hours=request.POST.get('project_hours',None)
-        
-        project_department=projectDepartment.objects.get(id=project_department_id)
+    if request.method == 'POST':
+        name = request.POST.get('project_name', None)
+        date_of_receive = request.POST.get('project_date_of_receive', None)
+        duration = request.POST.get('project_duration', None)
+        project_department_id = request.POST.get('project_department', None)
+        hours = request.POST.get('project_hours', None)
 
-        project=Project.objects.create(
+        if date_of_receive:
+            date_of_receive = datetime.strptime(date_of_receive, '%Y-%m-%d').date()
+        if duration:
+            duration = int(duration)
+        if hours:
+            hours = int(hours)
+
+        project_department = projectDepartment.objects.get(id=project_department_id)
+
+        project = Project.objects.create(
             name=name,
             date_of_receive=date_of_receive,
             duration=duration,
             project_department=project_department,
-            hours=hours  
-            )
-        
+            hours=hours
+        )
         project.save()
-
+        
         return redirect('adminpage')
-    
-    context={
-        'department_choices':projectDepartment.objects.all()
+
+    context = {
+        'department_choices': projectDepartment.objects.all()
     }
 
     return render(request, 'add_project.html', context)
-
+    
 def add_department(request):
     if request.method=='POST':
         name=request.POST.get('department_name', None)

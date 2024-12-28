@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from datetime import timedelta
 
 # Create your models here.
 
@@ -81,7 +82,7 @@ class Project(models.Model):
     name=models.CharField(max_length=100)
     date_of_receive=models.DateField(null=True, blank=True)
     duration=models.IntegerField(null=True, blank=True)
-
+    deadline = models.DateField(null=True, blank=True, editable=False) 
    
 
     project_department=models.ForeignKey("projectDepartment",on_delete=models.SET_NULL,null=True)
@@ -89,6 +90,8 @@ class Project(models.Model):
 
     def save(self, *args, **kwargs):
        
+        if self.date_of_receive and self.duration is not None:
+            self.deadline = self.date_of_receive + timedelta(days=self.duration)
         super().save(*args, **kwargs)
 
     def __str__(self):

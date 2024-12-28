@@ -12,6 +12,7 @@
         {% csrf_token %} 
         <p>Date of Receive: {{ project.date_of_receive }}</p>
         <p>Duration: {{ project.duration }} days</p>
+        <p>Deadline: {{project.deadline}}</p>
         <p>Hours: {{ project.hours }}</p>
         <label>Project Manager</label>
         <select name="manager_id" id="manager">

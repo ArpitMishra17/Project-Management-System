@@ -16,6 +16,7 @@
                 <th>Name</th>
                 <th>Date of Project Receival</th>
                 <th>Duration</th>
+                <th>Deadline</th>
                 <th>Departement</th>
                 <th>Hours</th>
             </tr>
@@ -27,6 +28,7 @@
                 <td><a href="{% url 'project_home' project.id %}">{{ project.name }}</a></td>
                 <td>{{ project.date_of_receive}}</td>
                 <td>{{ project.duration}} days</td>
+                <td>{{ project.deadline }}</td>
                 <td>{{ project.project_department }}</td>
                 <td>{{ project.hours }} hrs</td>
             </tr>
