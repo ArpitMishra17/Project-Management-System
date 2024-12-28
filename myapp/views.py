@@ -439,3 +439,27 @@ def stop_task(request,task_id):
 
     return redirect('employee_home') 
 
+def display_modules(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    modules = project.module_set.all()
+
+    context = {
+        'project': project,
+        'modules': modules,
+    }
+    return render(request, 'display_modules.html', context)
+
+
+def display_tasks(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    modules = project.module_set.prefetch_related('tasks')
+
+    tasks = []
+    for module in modules:
+        tasks.extend(module.tasks.all())
+
+    context = {
+        'project': project,
+        'tasks': tasks,
+    }
+    return render(request, 'display_tasks.html', context)

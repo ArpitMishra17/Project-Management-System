@@ -2,92 +2,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Project Modules - {{ project.name }}</title>
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
-    <!-- <style>
-        .container {
-            width: 95%;
-            margin: 20px auto;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .back-button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        table.dataTable tbody tr:hover {
-            background-color: #f5f5f5;
-        }
-    </style> -->
+    <title>Project Modules</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Modules for {{ project.name }}</h1>
-            <a href="{% url 'manager_project_home' project.id %}" class="back-button">Back to Project</a>
-        </div>
-        
-        <table id="modulesTable" class="display">
-            <thead>
-                <tr>
-                    <th>Module Name</th>
-                    <th>Status</th>
-                    <th>Estimated Duration (hrs)</th>
-                    <th>Actual Duration (hrs)</th>
-                    <th>Description</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Tasks Count</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for module in modules %}
-                <tr>
-                    <td>{{ module.name }}</td>
-                    <td>{{ module.status }}</td>
-                    <td>{{ module.estimated_duration|default:"--" }}</td>
-                    <td>{{ module.actual_duration|default:"--" }}</td>
-                    <td>{{ module.description|default:"--" }}</td>
-                    <td>{{ module.start_time|default:"--" }}</td>
-                    <td>{{ module.end_time|default:"--" }}</td>
-                    <td>{{ module.tasks.count }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    <h1>Modules for Project: {{ project.name }}</h1>
+    <table id="modules-table" class="display">
+        <thead>
+            <tr>
+                <th>Module Name</th>
+                <th>Status</th>
+                <th>Estimated Duration</th>
+                <th>Actual Duration</th>
+                <th>Description</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Tasks</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for module in modules %}
+            <tr>
+                <td>{{ module.name }}</td>
+                <td>{{ module.status }}</td>
+                <td>{{ module.estimated_duration }}</td>
+                <td>{{ module.actual_duration|default:"Not completed" }}</td>
+                <td>{{ module.description }}</td>
+                <td>{{ module.start_time|default:"N/A" }}</td>
+                <td>{{ module.end_time|default:"N/A" }}</td>
+                <td>{{ module.tasks.count }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8">No modules found for this project.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-    <!-- Scripts -->
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $('#modulesTable').DataTable({
-                dom: 'Bfrtip',
-                buttons: [
-                    'copy', 'csv', 'excel', 'pdf'
-                ],
-                pageLength: 10,
-                order: [[0, 'asc']],
-                lengthChange: true,
-                searching: true,
-                ordering: true,
-                info: true,
-                responsive: true
-            });
+        $(document).ready(function () {
+            $('#modules-table').DataTable();
         });
     </script>
+    <div class="button-container">
+        <a href="{% url 'manager_project_home' project.id %}">Back to Project</a>
+    </div>
 </body>
 </html>

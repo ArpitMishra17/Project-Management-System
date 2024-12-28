@@ -26,4 +26,6 @@ urlpatterns=[
     path('start_task/<int:task_id>', views.start_task, name='start_task'),
     path('stop_task/<int:task_id>', views.stop_task, name='stop_task'),
     path('update-password/', views.update_password, name='update_password'),
+    path('project/<int:project_id>/modules/', views.display_modules, name='display_modules'),
+    path('project/<int:project_id>/tasks/', views.display_tasks, name='display_tasks'),
 ]

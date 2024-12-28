@@ -34,8 +34,14 @@
         <button id="assign-employee-btn">Assign Employee</button>
         <button id="add-module-btn">Add Module</button>
         <button id="add-task-btn">Add Task</button>
-        <button id="view-modules-btn">View Modules</button>
-        <button id="view-tasks-btn">View Tasks</button>
+        <div class="modal_button">
+            <a href="{% url 'display_modules' project.id %}">
+                <button >View Modules</button>
+            </a>
+            <a href="{% url 'display_tasks' project.id %}">
+                <button >View Tasks</button>
+            </a>
+        </div>
     </div>
     <!-- Assign Employee Modal -->
     <dialog id="assign-employee-modal">
@@ -146,7 +152,7 @@
         </form>
     </dialog>
 
-     <!-- View Modules Modal -->
+<!--      
      <dialog id="view-modules-modal">
         <span class="close-btn" id="close-view-modules">&times;</span>
         <h2>Project Modules</h2>
@@ -174,7 +180,7 @@
         </div>
     </dialog>
 
-    <!-- View Tasks Modal -->
+    
     <dialog id="view-tasks-modal">
         <span class="close-btn" id="close-view-tasks">&times;</span>
         <h2>Project Tasks</h2>
@@ -235,7 +241,7 @@
             </div>
             {% endfor %}
         </div>
-    </dialog>
+    </dialog> -->
 
 
     <!-- Back to Manager Home -->
@@ -327,73 +333,72 @@
                 employeeSelect.innerHTML = '<option value="">-- Select Employee --</option>';
             }
         });
-           // Add new modal functionality
-           const viewModulesModal = document.getElementById('view-modules-modal');
-        const viewTasksModal = document.getElementById('view-tasks-modal');
-        const viewModulesBtn = document.getElementById('view-modules-btn');
-        const viewTasksBtn = document.getElementById('view-tasks-btn');
-        const closeViewModules = document.getElementById('close-view-modules');
-        const closeViewTasks = document.getElementById('close-view-tasks');
+          
+        // const viewModulesModal = document.getElementById('view-modules-modal');
+        // const viewTasksModal = document.getElementById('view-tasks-modal');
+        // const viewModulesBtn = document.getElementById('view-modules-btn');
+        // const viewTasksBtn = document.getElementById('view-tasks-btn');
+        // const closeViewModules = document.getElementById('close-view-modules');
+        // const closeViewTasks = document.getElementById('close-view-tasks');
 
-        // Open view modals
-        viewModulesBtn.addEventListener('click', () => {
-            viewModulesModal.showModal();
-        });
+   
+        // viewModulesBtn.addEventListener('click', () => {
+        //     viewModulesModal.showModal();
+        // });
         
-        viewTasksBtn.addEventListener('click', () => {
-            viewTasksModal.showModal();
-        });
+        // viewTasksBtn.addEventListener('click', () => {
+        //     viewTasksModal.showModal();
+        // });
 
-        // Close view modals
-        closeViewModules.addEventListener('click', () => {
-            viewModulesModal.close();
-        });
+
+        // closeViewModules.addEventListener('click', () => {
+        //     viewModulesModal.close();
+        // });
         
-        closeViewTasks.addEventListener('click', () => {
-            viewTasksModal.close();
-        });
+        // closeViewTasks.addEventListener('click', () => {
+        //     viewTasksModal.close();
+        // });
 
-        // Close modals when clicking outside
-        window.addEventListener("click", function(event) {
-            if (event.target === viewModulesModal) {
-                viewModulesModal.close();
-            }
-            if (event.target === viewTasksModal) {
-                viewTasksModal.close();
-            }
-        });
+      
+        // window.addEventListener("click", function(event) {
+        //     if (event.target === viewModulesModal) {
+        //         viewModulesModal.close();
+        //     }
+        //     if (event.target === viewTasksModal) {
+        //         viewTasksModal.close();
+        //     }
+        // });
 
-        // Task filtering functionality
-        const moduleFilter = document.getElementById('module-filter');
-        const statusFilter = document.getElementById('status-filter');
-        const priorityFilter = document.getElementById('priority-filter');
-        const moduleTasks = document.querySelectorAll('.module-tasks');
-        const taskItems = document.querySelectorAll('.task-item');
+        // const moduleFilter = document.getElementById('module-filter');
+        // const statusFilter = document.getElementById('status-filter');
+        // const priorityFilter = document.getElementById('priority-filter');
+        // const moduleTasks = document.querySelectorAll('.module-tasks');
+        // const taskItems = document.querySelectorAll('.task-item');
 
-        function filterTasks() {
-            const selectedModule = moduleFilter.value;
-            const selectedStatus = statusFilter.value;
-            const selectedPriority = priorityFilter.value;
+        // function filterTasks() {
+        //     const selectedModule = moduleFilter.value;
+        //     const selectedStatus = statusFilter.value;
+        //     const selectedPriority = priorityFilter.value;
 
-            moduleTasks.forEach(moduleSection => {
-                const moduleId = moduleSection.dataset.moduleId;
-                const shouldShowModule = !selectedModule || moduleId === selectedModule;
-                moduleSection.style.display = shouldShowModule ? 'block' : 'none';
+        //     moduleTasks.forEach(moduleSection => {
+        //         const moduleId = moduleSection.dataset.moduleId;
+        //         const shouldShowModule = !selectedModule || moduleId === selectedModule;
+        //         moduleSection.style.display = shouldShowModule ? 'block' : 'none';
 
-                if (shouldShowModule) {
-                    const tasks = moduleSection.querySelectorAll('.task-item');
-                    tasks.forEach(task => {
-                        const matchesStatus = !selectedStatus || task.dataset.status === selectedStatus;
-                        const matchesPriority = !selectedPriority || task.dataset.priority === selectedPriority;
-                        task.style.display = (matchesStatus && matchesPriority) ? 'block' : 'none';
-                    });
-                }
-            });
-        }
+        //         if (shouldShowModule) {
+        //             const tasks = moduleSection.querySelectorAll('.task-item');
+        //             tasks.forEach(task => {
+        //                 const matchesStatus = !selectedStatus || task.dataset.status === selectedStatus;
+        //                 const matchesPriority = !selectedPriority || task.dataset.priority === selectedPriority;
+        //                 task.style.display = (matchesStatus && matchesPriority) ? 'block' : 'none';
+        //             });
+        //         }
+        //     });
+        // }
 
-        moduleFilter.addEventListener('change', filterTasks);
-        statusFilter.addEventListener('change', filterTasks);
-        priorityFilter.addEventListener('change', filterTasks);
+        // moduleFilter.addEventListener('change', filterTasks);
+        // statusFilter.addEventListener('change', filterTasks);
+        // priorityFilter.addEventListener('change', filterTasks);
     </script>
 </body>
 </html>
