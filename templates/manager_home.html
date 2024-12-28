@@ -34,6 +34,7 @@
                 <th>Assigned Employees</th>
                 <th>Status</th>
                 <th>Priority</th>
+                <th>Start Time</th>
             </tr>
         </thead>
         <tbody>
@@ -50,6 +51,7 @@
                         </td>
                         <td>{{ task.task_status }}</td>
                         <td>{{ task.task_priority }}</td>
+                        <td>{{ task.task_startTime|default:"N/A" }}</td>
                     </tr>
                 {% endif %}
             {% endfor %}
@@ -83,6 +85,7 @@
                         </td>
                         <td>{{ task.task_status }}</td>
                         <td>{{ task.task_priority }}</td>
+                        
                     </tr>
                 {% endif %}
             {% endfor %}
@@ -100,6 +103,8 @@
                 <th>Assigned Employees</th>
                 <th>Status</th>
                 <th>Priority</th>
+                <th>Start Time</th>
+                <th>End Time</th>
             </tr>
         </thead>
         <tbody>
@@ -116,6 +121,8 @@
                         </td>
                         <td>{{ task.task_status }}</td>
                         <td>{{ task.task_priority }}</td>
+                        <td>{{ task.task_startTime|default:"N/A" }}</td>
+                        <td>{{ task.task_endTime|default:"N/A" }}</td>
                     </tr>
                 {% endif %}
             {% endfor %}

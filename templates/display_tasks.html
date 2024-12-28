@@ -12,6 +12,7 @@
         <thead>
             <tr>
                 <th>Task Name</th>
+                <th>Module</th>
                 <th>Status</th>
                 <th>Priority</th>
                 <th>Assigned Employees</th>
@@ -26,6 +27,7 @@
             {% for task in tasks %}
             <tr>
                 <td>{{ task.name }}</td>
+                <td>{{task.module_id.name}}</td>
                 <td>{{ task.status }}</td>
                 <td>{{ task.priority }}</td>
                 <td>
@@ -35,7 +37,7 @@
                         Not assigned
                     {% endfor %}
                 </td>
-                <td>{{ task.estimated_duration }}</td>
+                <td>{{ task.estimated_duration }} hours</td>
                 <td>{{ task.actual_duration|default:"Not completed" }}</td>
                 <td>{{ task.description }}</td>
                 <td>{{ task.start_time|default:"N/A" }}</td>

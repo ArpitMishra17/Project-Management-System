@@ -106,6 +106,7 @@
                     <th>Priority</th>
                     <th>Estimated Duration</th>
                     <th>Description</th>
+                    <th>Start Time</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -119,6 +120,7 @@
                             <td>{{ task.get_priority_display }}</td>
                             <td>{{ task.estimated_duration }} hours</td>
                             <td>{{ task.description }}</td>
+                            <td>{{ task.start_time }}</td>
                             <td>
                                 <a href="{% url 'stop_task' task.id %}">Stop Task</a>
                             </td>

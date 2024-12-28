@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-from datetime import timedelta
+from datetime import timedelta,datetime,time
 
 # Create your models here.
 
@@ -131,8 +131,8 @@ class Module(models.Model):
     name=models.CharField(max_length=100)
     project_id=models.ForeignKey(Project,on_delete=models.CASCADE,null=True,blank=True)
     estimated_duration=models.IntegerField(null=True,blank=True)
-    start_time=models.TimeField(null=True,blank=True)
-    end_time=models.TimeField(null=True,blank=True)
+    start_time=models.DateTimeField(null=True,blank=True)
+    end_time=models.DateTimeField(null=True,blank=True)
     actual_duration=models.IntegerField(null=True,blank=True)
     description=models.CharField(max_length=200,null=True,blank=True)
     status_choices=(
@@ -154,8 +154,8 @@ class Task(models.Model):
     
     module_id=models.ForeignKey(Module,on_delete=models.CASCADE,null=True,blank=True, related_name="tasks")
     estimated_duration=models.IntegerField(null=True,blank=True)
-    start_time=models.TimeField(null=True,blank=True)
-    end_time=models.TimeField(null=True,blank=True)
+    start_time=models.DateTimeField(null=True,blank=True)
+    end_time=models.DateTimeField(null=True,blank=True)
     actual_duration=models.IntegerField(null=True,blank=True)
     description=models.CharField(max_length=200,null=True,blank=True)
     status_choices=(
@@ -171,6 +171,90 @@ class Task(models.Model):
     )
     priority=models.CharField(max_length=100,choices=priority_choices,default="Low Priority")
 
+    def calculate_duration(self):
+        if self.start_time and self.end_time:
+            # Handle case where end_time is a time object
+            if isinstance(self.end_time, time):
+                # Convert end_time to datetime using start_time's date
+                end_datetime = datetime.combine(
+                    self.start_time.date(),
+                    self.end_time
+                )
+                # Convert to timezone-aware datetime if start_time is timezone-aware
+                if timezone.is_aware(self.start_time):
+                    end_datetime = timezone.make_aware(end_datetime)
+            else:
+                end_datetime = self.end_time
+
+            duration = end_datetime - self.start_time
+            return duration.total_seconds() / 3600  # Convert to hours
+        return 0
+    
+    def update_module_times(self):
+        if not self.module_id:
+            return
+
+        module = self.module_id
+        all_tasks = module.tasks.all()
+        
+        # Update module start time when first task starts
+        if self.status == "Ongoing" and self.start_time:
+            started_tasks = all_tasks.exclude(id=self.id).filter(start_time__isnull=False)
+            if not started_tasks.exists():
+                # This is the first task to start
+                module.start_time = self.start_time
+                module.status = "Ongoing"
+        
+        # Update module end time when last task finishes
+        if self.status == "Finished":
+            unfinished_tasks = all_tasks.exclude(id=self.id).filter(
+                status__in=["Not started", "Ongoing"]
+            )
+            if not unfinished_tasks.exists():
+                # This was the last task to finish
+                module.end_time = self.end_time
+                module.status = "Finished"
+                
+                # Calculate module's actual duration
+                if module.start_time and module.end_time:
+                    duration = module.end_time - module.start_time
+                    module.actual_duration = duration.total_seconds() / 3600
+
+        module.save()
+
+
+    def save(self, *args, **kwargs):
+        if self.status == "Finished" and self.start_time and self.end_time:
+            self.actual_duration = self.calculate_duration()
+            
+            # Get the project through the module
+            if self.module_id and self.module_id.project_id:
+                project = self.module_id.project_id
+                
+                # Update hours for each assigned employee
+                for employee in self.employees.all():
+                    hours_record, created = EmployeeProjectHours.objects.get_or_create(
+                        employee=employee,
+                        project=project
+                    )
+                    hours_record.total_hours += self.actual_duration
+                    hours_record.save()
+        
+        super().save(*args, **kwargs)
+
+        self.update_module_times()
 
     def __str__(self):
         return f"{self.name}" 
+    
+
+class EmployeeProjectHours(models.Model):
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    total_hours = models.FloatField(default=0)
+
+    class Meta:
+        unique_together = ('employee', 'project')
+
+    def __str__(self):
+        return f"{self.employee.name} - {self.project.name} - {self.total_hours} hours"

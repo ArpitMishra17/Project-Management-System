@@ -5,6 +5,7 @@
     <title>Project Modules</title>
     <link rel="stylesheet" href="{% static 'styles.css' %}">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+
 </head>
 <body>
     <h1>Modules for Project: {{ project.name }}</h1>
@@ -13,11 +14,9 @@
             <tr>
                 <th>Module Name</th>
                 <th>Status</th>
-                <th>Estimated Duration</th>
-                <th>Actual Duration</th>
+                <th>Duration (Hours)</th>
                 <th>Description</th>
-                <th>Start Time</th>
-                <th>End Time</th>
+                <th>Timeline</th>
                 <th>Tasks</th>
             </tr>
         </thead>
@@ -25,17 +24,54 @@
             {% for module in modules %}
             <tr>
                 <td>{{ module.name }}</td>
-                <td>{{ module.status }}</td>
-                <td>{{ module.estimated_duration }}</td>
-                <td>{{ module.actual_duration|default:"Not completed" }}</td>
-                <td>{{ module.description }}</td>
-                <td>{{ module.start_time|default:"N/A" }}</td>
-                <td>{{ module.end_time|default:"N/A" }}</td>
-                <td>{{ module.tasks.count }}</td>
+                <td>
+                    <span class="status-badge status-{{ module.status|lower|cut:" " }}">
+                        {{ module.status }}
+                    </span>
+                </td>
+                <td>
+                    <div class="duration">
+                        {% if module.estimated_duration %}
+                            Estimated: {{ module.estimated_duration }} hrs
+                        {% else %}
+                            Estimated: N/A
+                        {% endif %}
+                        <br>
+                        {% if module.actual_duration %}
+                            Actual: {{ module.actual_duration }} hrs
+                        {% elif module.status == "Finished" %}
+                            Actual: Calculating...
+                        {% else %}
+                            Actual: Pending
+                        {% endif %}
+                    </div>
+                </td>
+                <td>{{ module.description|default:"No description provided" }}</td>
+                <td>
+                    <div class="timestamp">
+                        {% if module.start_time %}
+                            Started: {{ module.start_time|date:"M d, Y H:i" }}<br>
+                        {% else %}
+                            Started: Not yet started<br>
+                        {% endif %}
+                        {% if module.end_time %}
+                            Ended: {{ module.end_time|date:"M d, Y H:i" }}
+                        {% elif module.status == "Ongoing" %}
+                            Ended: In progress
+                        {% else %}
+                            Ended: Not completed
+                        {% endif %}
+                    </div>
+                </td>
+                <td>
+                    <span class="task-count">
+                        {{ module.tasks.count }} task{{ module.tasks.count|pluralize }}
+                    </span>
+                </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="8">No modules found for this project.</td>
+                <td colspan="6">No modules found for this project.</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -45,7 +81,14 @@
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#modules-table').DataTable();
+            $('#modules-table').DataTable({
+                order: [[1, 'desc']], // Sort by status by default
+                pageLength: 10,
+                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                columnDefs: [
+                    { orderable: false, targets: [3] } // Description column not sortable
+                ]
+            });
         });
     </script>
     <div class="button-container">

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect,get_object_or_404
 from django.core.paginator import Paginator
 from django.contrib.auth import login, authenticate
-from .models import Employee,Project,Department,Designation,projectDepartment,Task,Module
+from .models import Employee,Project,Department,Designation,projectDepartment,Task,Module,EmployeeProjectHours
 from django.contrib import messages
 from django.http import JsonResponse
 from django.utils import timezone
@@ -129,7 +129,7 @@ def add_project(request):
             hours=hours
         )
         project.save()
-        
+
         return redirect('adminpage')
 
     context = {
@@ -290,6 +290,7 @@ def manager_home(request):
                 "employee_names": [employee.name for employee in task.employees.all()],
                 "task_status" : task.status,
                 "task_priority" : task.priority,
+                "task_startTime":task.start_time,
                 "task_endTime" : task.end_time,
                 
             }
@@ -318,6 +319,11 @@ def manager_project_home(request, project_id):
         if employee_id:
             employee = get_object_or_404(Employee, id=employee_id)
             project.employees.add(employee)
+            EmployeeProjectHours.objects.get_or_create(
+                employee=employee,
+                project=project,
+                defaults={'total_hours': 0}
+            )
             return redirect('manager_project_home', project_id=project.id)
 
     # Get all modules with their tasks
@@ -328,11 +334,14 @@ def manager_project_home(request, project_id):
         id__in=project.employees.values_list('id', flat=True)
     )
 
+    employee_hours = EmployeeProjectHours.objects.filter(project=project)
+    
     context = {
         'project': project,
         'designations': designations,
         'employees': unassigned_employees,
         'modules': modules,
+        'employee_hours': employee_hours,
     }
 
     return render(request, 'manager_project_home.html', context)
@@ -424,7 +433,7 @@ def start_task(request,task_id):
     task = get_object_or_404(Task, id=task_id)
 
     if task.status == "Not started":
-        task.start_time = timezone.now().time()
+        task.start_time = timezone.now()
         task.status = "Ongoing"
         task.save()
         messages.success(request, "Task started successfully!")
@@ -437,7 +446,7 @@ def stop_task(request,task_id):
     task = get_object_or_404(Task, id=task_id)
 
     if task.status == "Ongoing":
-        task.end_time = timezone.now().time()
+        task.end_time = timezone.now()
         task.status = "Finished"
         task.save()
         messages.success(request, "Task ended successfully!")
@@ -470,3 +479,13 @@ def display_tasks(request, project_id):
         'tasks': tasks,
     }
     return render(request, 'display_tasks.html', context)
+
+def display_project_employees(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    
+
+    context = {
+        'project': project,
+        
+    }
+    return render(request, 'display_project_employees.html', context)

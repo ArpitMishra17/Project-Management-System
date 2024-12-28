@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Project Employees</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+</head>
+<body>
+    <h1>Employees for Project: {{ project.name }}</h1>
+    <table id="tasks-table" class="display">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Age</th>
+                <th>Phone number</th>
+                <th>Designation</th>
+                <th>Departement</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in project.employees.all %}
+            <tr>
+                <td>{{ employee.name }}</td>
+                <td>{{ employee.email}}</td>
+                <td>{{ employee.age}}</td>
+                <td>{{ employee.phone }}</td>
+                <td>{{ employee.designation }}</td>
+                <td>{{ employee.department }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9">No employees found for this project.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#tasks-table').DataTable();
+        });
+    </script>
+    <div class="button-container">
+        <a href="{% url 'manager_project_home' project.id %}">Back to Project</a>
+    </div>
+</body>
+</html>

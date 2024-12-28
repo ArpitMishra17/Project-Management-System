@@ -9,20 +9,18 @@
     <h1>Project: {{ project.name }}</h1><br><br>
     <div class="project-details">
         <!-- Project Details -->
-            <h2>Name: {{project.name}}</h2>
-            <h2>Date of Receival: {{project.date_of_receive}}</h2>
-            <h2>Duration: {{project.duration}}</h2>
-            <h2>Deadline: {{project.deadline}}</h2>
-            <h2>Department: {{project.project_department}}</h2>
-            <h2>Hours: {{project.hours}}</h2>
-            <h2>Assigned Employees:</h2>
-            <ul>
-                {% for employee in project.employees.all %}
-                <li>{{ employee.name }} ({{ employee.designation }})</li>
-                {% empty %}
-                <li>No employees assigned to this project yet.</li>
+            <strong>Name: </strong>{{project.name}}<br><br>
+            <strong>Date of Receival: </strong>{{project.date_of_receive}}<br><br>
+            <strong>Duration: </strong>{{project.duration}}<br><br>
+            <strong>Deadline: </strong>{{project.deadline}}<br><br>
+            <strong>Department: </strong>{{project.project_department}}<br><br>
+            <strong>Hours: </strong>{{project.hours}}<br>
+            <div class="employee-hours">
+                <h3>Employee Hours</h3>
+                {% for hours in employee_hours %}
+                    <p>{{ hours.employee.name }}({{hours.employee.designation}}): {{ hours.total_hours|floatformat:1 }} hours</p>
                 {% endfor %}
-            </ul>
+            </div>
             
 
     </div><br><br>
@@ -36,6 +34,9 @@
         <button id="add-module-btn">Add Module</button>
         <button id="add-task-btn">Add Task</button>
         <div class="modal_button">
+            <a href="{% url 'display_project_employees' project.id %}">
+                <button >View Employees</button>
+            </a>
             <a href="{% url 'display_modules' project.id %}">
                 <button >View Modules</button>
             </a>
