@@ -189,6 +189,12 @@ class Task(models.Model):
             duration = end_datetime - self.start_time
             return duration.total_seconds() / 3600  # Convert to hours
         return 0
+    def update_project_hours(self, duration):
+        if self.module_id and self.module_id.project_id:
+            project = self.module_id.project_id
+            if project.hours is not None:  # Check if hours is not None
+                project.hours = max(0, project.hours - duration)  # Ensure hours don't go negative
+                project.save()
     
     def update_module_times(self):
         if not self.module_id:
@@ -224,8 +230,20 @@ class Task(models.Model):
 
 
     def save(self, *args, **kwargs):
+        is_new_finish = False
+        if self.pk:  # If task already exists
+            old_task = Task.objects.get(pk=self.pk)
+            # Check if task is being marked as finished for the first time
+            is_new_finish = old_task.status != "Finished" and self.status == "Finished"
+        else:
+            is_new_finish = self.status == "Finished"
+
+
         if self.status == "Finished" and self.start_time and self.end_time:
             self.actual_duration = self.calculate_duration()
+
+            if is_new_finish:
+                self.update_project_hours(self.actual_duration)
             
             # Get the project through the module
             if self.module_id and self.module_id.project_id:
