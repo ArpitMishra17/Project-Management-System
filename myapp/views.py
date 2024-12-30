@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect,get_object_or_404
 from django.core.paginator import Paginator
 from django.contrib.auth import login, authenticate
-from .models import Employee,Project,Department,Designation,projectDepartment,Task,Module,EmployeeProjectHours
+from .models import Employee,Project,Department,Designation,projectDepartment,Task,Module,EmployeeProjectHours,Todo
 from django.contrib import messages
 from django.http import JsonResponse
 from django.utils import timezone
@@ -264,13 +264,25 @@ def project_home(request,project_id):
 def employee_home(request):
 
     employee=Employee.objects.get(email=request.user.email)
+    if request.method == 'POST' and 'todo_title' in request.POST:
+        title = request.POST.get('todo_title')
+        if title:
+            Todo.objects.create(employee=request.user, title=title)
+        return redirect('employee_home')
+    todos = Todo.objects.filter(employee=request.user)
 
-    return render(request,'employee_home.html',{'employee':employee})
+    return render(request,'employee_home.html',{'employee':employee,'todos':todos})
 
 def manager_home(request):
 
     employee=Employee.objects.get(email=request.user.email)
     projects = employee.projects.all()
+
+    if request.method == 'POST' and 'todo_title' in request.POST:
+        title = request.POST.get('todo_title')
+        if title:
+            Todo.objects.create(employee=request.user, title=title)
+        return redirect('manager_home')
 
     
     # Gather all tasks related to the manager's projects
@@ -299,7 +311,7 @@ def manager_home(request):
     context={
         'project_tasks_list': project_tasks_list,
         'employee':employee,
-        
+        'todos': Todo.objects.filter(employee=request.user)
     }
 
 
@@ -492,3 +504,20 @@ def display_project_employees(request, project_id):
         
     }
     return render(request, 'display_project_employees.html', context)
+
+def toggle_todo(request, todo_id):
+    try:
+        todo = Todo.objects.get(id=todo_id, employee=request.user)
+        todo.completed = not todo.completed
+        todo.save()
+        return JsonResponse({'status': 'success'})
+    except Todo.DoesNotExist:
+        return JsonResponse({'status': 'error'}, status=404)
+
+def delete_todo(request, todo_id):
+    try:
+        todo = Todo.objects.get(id=todo_id, employee=request.user)
+        todo.delete()
+        return JsonResponse({'status': 'success'})
+    except Todo.DoesNotExist:
+        return JsonResponse({'status': 'error'}, status=404)

@@ -269,3 +269,17 @@ class EmployeeProjectHours(models.Model):
 
     def __str__(self):
         return f"{self.employee.name} - {self.project.name} - {self.total_hours} hours"
+    
+
+class Todo(models.Model):
+    id=models.AutoField(primary_key=True)
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    completed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-created_at']

@@ -28,5 +28,7 @@ urlpatterns=[
     path('update-password/', views.update_password, name='update_password'),
     path('project/<int:project_id>/modules/', views.display_modules, name='display_modules'),
     path('project/<int:project_id>/tasks/', views.display_tasks, name='display_tasks'),
-    path("project/<int:project_id>/employees/",views.display_project_employees,name="display_project_employees")
+    path("project/<int:project_id>/employees/",views.display_project_employees,name="display_project_employees"),
+    path('toggle_todo/<int:todo_id>/', views.toggle_todo, name='toggle_todo'),
+    path('delete_todo/<int:todo_id>/', views.delete_todo, name='delete_todo'),
 ]

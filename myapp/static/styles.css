@@ -403,3 +403,51 @@ dialog{
     border: 1px solid #d6e9c6;
     border-radius: 8px;
 }
+
+.todolist{
+    margin: 0 auto;
+    width: 50%;
+    
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+
+}
+
+.todolist form{
+    margin-left: 0;
+    margin-right: auto;
+    height: 100px;
+    display: flex;               /* Make the container a flexbox */
+    align-items: center;         /* Vertically center the text and button */
+    justify-content: space-between; /* Ensures the button is pushed to the far right */
+    margin-bottom: 10px;   
+}
+
+.todolist span{
+    font-size: 20px;
+}
+
+.todolist .todo-item {
+    display: flex;               /* Make the container a flexbox */
+    align-items: center;         /* Vertically center the text and button */
+    justify-content: space-between; /* Ensures the button is pushed to the far right */
+    margin-bottom: 10px;          /* Adds spacing between items */
+}
+.todolist .delete-button{
+
+    background: black;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 0;
+    transition: background 0.3s ease;
+    border-radius: 12px;
+}
+.todolist .delete-button:hover{
+    background-color: #a94442;
+}
