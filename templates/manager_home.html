@@ -28,6 +28,7 @@
     <table id="ongoing-tasks-table" class="display">
         <thead>
             <tr>
+                <th>Sr.No</th>
                 <th>Task Name</th>
                 <th>Project Name</th>
                 <th>Module Name</th>
@@ -41,6 +42,7 @@
             {% for task in project_tasks_list %}
                 {% if task.task_status == 'Ongoing' %}
                     <tr>
+                        <td>{{ forloop.counter }}</td>
                         <td>{{ task.task_name }}</td>
                         <td>{{ task.project_name }}</td>
                         <td>{{ task.module_name }}</td>
@@ -63,6 +65,7 @@
     <table id="not-started-tasks-table" class="display">
         <thead>
             <tr>
+                <th>Sr.No</th>
                 <th>Task Name</th>
                 <th>Project Name</th>
                 <th>Module Name</th>
@@ -75,6 +78,7 @@
             {% for task in project_tasks_list %}
                 {% if task.task_status == 'Not started' %}
                     <tr>
+                        <td>{{ forloop.counter }}</td>
                         <td>{{ task.task_name }}</td>
                         <td>{{ task.project_name }}</td>
                         <td>{{ task.module_name }}</td>
@@ -97,6 +101,7 @@
     <table id="finished-tasks-table" class="display">
         <thead>
             <tr>
+                <th>Sr.No</th>
                 <th>Task Name</th>
                 <th>Project Name</th>
                 <th>Module Name</th>
@@ -111,6 +116,7 @@
             {% for task in project_tasks_list %}
                 {% if task.task_status == 'Finished' %}
                     <tr>
+                        <td>{{ forloop.counter }}</td>
                         <td>{{ task.task_name }}</td>
                         <td>{{ task.project_name }}</td>
                         <td>{{ task.module_name }}</td>
@@ -137,9 +143,15 @@
     <script>
         $(document).ready(function() {
             // Initialize DataTables for each table
-            $('#ongoing-tasks-table').DataTable();
-            $('#not-started-tasks-table').DataTable();
-            $('#finished-tasks-table').DataTable();
+            $('#ongoing-tasks-table').DataTable({
+                order: [[0, 'asc']]
+            });
+            $('#not-started-tasks-table').DataTable({
+                order: [[0, 'asc']]
+            });
+            $('#finished-tasks-table').DataTable({
+                order: [[0, 'asc']]
+            });
         });
     </script>
 </body>

@@ -11,6 +11,7 @@
     <table id="tasks-table" class="display">
         <thead>
             <tr>
+                <th>Sr.No</th>
                 <th>Task Name</th>
                 <th>Module</th>
                 <th>Status</th>
@@ -26,6 +27,7 @@
         <tbody>
             {% for task in tasks %}
             <tr>
+                <td>{{ forloop.counter }}</td>
                 <td>{{ task.name }}</td>
                 <td>{{task.module_id.name}}</td>
                 <td>{{ task.status }}</td>
@@ -55,7 +57,9 @@
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#tasks-table').DataTable();
+            $('#tasks-table').DataTable({
+                order: [[0, 'asc']]
+            });
         });
     </script>
     <div class="button-container">

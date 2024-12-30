@@ -459,6 +459,9 @@ def display_modules(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     modules = project.module_set.all()
 
+    for module in modules:
+        print(module.actual_duration)
+
     context = {
         'project': project,
         'modules': modules,

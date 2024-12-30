@@ -12,6 +12,7 @@
     <table id="modules-table" class="display">
         <thead>
             <tr>
+                <th>Sr.No</th>
                 <th>Module Name</th>
                 <th>Status</th>
                 <th>Duration (Hours)</th>
@@ -23,6 +24,7 @@
         <tbody>
             {% for module in modules %}
             <tr>
+                <td>{{ forloop.counter }}</td>
                 <td>{{ module.name }}</td>
                 <td>
                     <span class="status-badge status-{{ module.status|lower|cut:" " }}">
@@ -82,7 +84,7 @@
     <script>
         $(document).ready(function () {
             $('#modules-table').DataTable({
-                order: [[1, 'desc']], // Sort by status by default
+                order: [[0, 'asc']], // Sort by status by default
                 pageLength: 10,
                 lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
                 columnDefs: [

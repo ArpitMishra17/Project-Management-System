@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from datetime import timedelta,datetime,time
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -172,23 +173,15 @@ class Task(models.Model):
     priority=models.CharField(max_length=100,choices=priority_choices,default="Low Priority")
 
     def calculate_duration(self):
-        if self.start_time and self.end_time:
-            # Handle case where end_time is a time object
-            if isinstance(self.end_time, time):
-                # Convert end_time to datetime using start_time's date
-                end_datetime = datetime.combine(
-                    self.start_time.date(),
-                    self.end_time
-                )
-                # Convert to timezone-aware datetime if start_time is timezone-aware
-                if timezone.is_aware(self.start_time):
-                    end_datetime = timezone.make_aware(end_datetime)
-            else:
-                end_datetime = self.end_time
-
-            duration = end_datetime - self.start_time
-            return duration.total_seconds() / 3600  # Convert to hours
-        return 0
+        if not (self.start_time and self.end_time):
+            return 0
+        
+        if self.start_time > self.end_time:
+            raise ValidationError("Start time must be before end time")
+            
+        duration = self.end_time - self.start_time
+        return duration.total_seconds() / 3600
+    
     def update_project_hours(self, duration):
         if self.module_id and self.module_id.project_id:
             project = self.module_id.project_id

@@ -23,7 +23,7 @@
                 "searching": true,
                 "ordering": true,
                 "info": true,
-                "order": [[3, 'desc']] // Sort by Priority column (index 3) in descending order
+                "order": [[4, 'desc']] // Sort by Priority column (index 3) in descending order
             });
 
             // Ongoing Tasks Table
@@ -32,7 +32,7 @@
                 "searching": true,
                 "ordering": true,
                 "info": true,
-                "order": [[3, 'desc']] // Sort by Priority column (index 3) in descending order
+                "order": [[4, 'desc']] // Sort by Priority column (index 3) in descending order
             });
 
             // Completed Tasks Table
@@ -41,7 +41,7 @@
                 "searching": true,
                 "ordering": true,
                 "info": true,
-                "order": [[3, 'desc']] // Sort by Priority column (index 3) in descending order
+                "order": [[4, 'desc']] // Sort by Priority column (index 3) in descending order
             });
         });
     </script>
@@ -64,6 +64,7 @@
         <table id="pending-tasks" class="display" border="1">
             <thead>
                 <tr>
+                    <th>Sr.No</th>
                     <th>Task Name</th>
                     <th>Module</th>
                     <th>Status</th>
@@ -77,6 +78,7 @@
                 {% for task in employee.tasks.all %}
                     {% if task.status == 'Not started' %}
                         <tr>
+                            <td>{{forloop.counter}}</td>
                             <td>{{ task.name }}</td>
                             <td>{{ task.module_id.name }}</td>
                             <td>{{ task.get_status_display }}</td>
@@ -100,6 +102,7 @@
         <table id="ongoing-tasks" class="display" border="1">
             <thead>
                 <tr>
+                    <th>Sr.No</th>
                     <th>Task Name</th>
                     <th>Module</th>
                     <th>Status</th>
@@ -114,6 +117,7 @@
                 {% for task in employee.tasks.all %}
                     {% if task.status == 'Ongoing' %}
                         <tr>
+                            <td>{{ forloop.counter }}</td>
                             <td>{{ task.name }}</td>
                             <td>{{ task.module_id.name }}</td>
                             <td>{{ task.get_status_display }}</td>
@@ -138,6 +142,7 @@
         <table id="completed-tasks" class="display" border="1">
             <thead>
                 <tr>
+                    <th>Sr.No</th>
                     <th>Task Name</th>
                     <th>Module</th>
                     <th>Status</th>
@@ -152,6 +157,7 @@
                 {% for task in employee.tasks.all %}
                     {% if task.status == 'Finished' %}
                         <tr>
+                            <td>{{ forloop.counter }}</td>
                             <td>{{ task.name }}</td>
                             <td>{{ task.module_id.name }}</td>
                             <td>{{ task.get_status_display }}</td>
